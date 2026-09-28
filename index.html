@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteRight - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-body">
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <div class="brand">
+            <div class="logo">✓</div>
+            <div>
+                <h1>VoteRight</h1>
+                <p>Online Voting System</p>
+            </div>
+        </div>
+
+        <div class="login-tabs">
+            <button class="tab active" onclick="setLoginMode('voter')">
+                Voter Login
+            </button>
+
+            <button class="tab" onclick="setLoginMode('admin')">
+                Admin Login
+            </button>
+        </div>
+
+        <form id="loginForm">
+
+            <input type="hidden" id="loginMode" value="voter">
+
+            <label>Email</label>
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label>Password</label>
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Enter password"
+                required
+            >
+
+            <button type="submit" class="btn primary full">
+                Login
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>New voter?</p>
+            <a href="register.html">Create an account</a>
+        </div>
+
+        
+
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteRight - Registration</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-body">
+
+<div class="auth-container">
+    <div class="auth-card wide">
+
+        <div class="brand">
+            <div class="logo">✓</div>
+            <div>
+                <h1>VoteRight</h1>
+                <p>Voter Registration</p>
+            </div>
+        </div>
+
+        <form id="registrationForm">
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Full Name</label>
+                    <input
+                        type="text"
+                        id="regName"
+                        placeholder="Enter full name"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Roll Number</label>
+                    <input
+                        type="text"
+                        id="regRoll"
+                        placeholder="Enter roll number"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        id="regEmail"
+                        placeholder="Enter email"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Mobile</label>
+                    <input
+                        type="tel"
+                        id="regMobile"
+                        placeholder="Enter mobile number"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Department</label>
+                    <select id="regDepartment" required>
+                        <option value="">Select Department</option>
+                        <option>BCA</option>
+                        <option>BBA</option>
+                        <option>BA</option>
+                        <option>BSc</option>
+                        <option>BCOM</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Year</label>
+                    <select id="regYear" required>
+                        <option value="">Select Year</option>
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        id="regPassword"
+                        placeholder="Create password"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Confirm Password</label>
+                    <input
+                        type="password"
+                        id="regConfirmPassword"
+                        placeholder="Confirm password"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn primary full">
+                Register
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            <p>Already registered?</p>
+            <a href="index.html">Back to Login</a>
+        </div>
+
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
