@@ -3,16 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Elections</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- NAVBAR -->
 
-<div id="toast" class="toast"></div>
+    <header class="topbar">
 
-<script src="js/app.js"></script>
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight</span>
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="elections.html" class="active">
+                Elections
+            </a>
+
+            <a href="my-votes.html">
+                My Votes
+            </a>
+
+            <a href="results.html">
+                Results
+            </a>
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="small-text">
+                    VoteRight Elections
+                </p>
+
+                <h1>
+                    Available Elections
+                </h1>
+
+                <p>
+                    Choose an active election and cast your vote.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message"
+        >
+            Loading elections...
+        </div>
+
+
+        <!-- ELECTIONS -->
+
+        <section
+            id="electionsContainer"
+            class="quick-actions"
+        ></section>
+
+    </main>
+
+
+    <script>
+
+        /* =========================================
+           CHECK LOGIN
+        ========================================= */
+
+        const token =
+            localStorage.getItem("vr_token");
+
+
+        if (!token) {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "index.html";
+        }
+
+
+        /* =========================================
+           LOAD ELECTIONS
+        ========================================= */
+
+        async function loadElections() {
+
+            const container =
+                document.getElementById(
+                    "electionsContainer"
+                );
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/elections/",
+                        {
+                            method: "GET"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load elections"
+                    );
+
+                }
+
+
+                const elections =
+                    data.elections || [];
+
+
+                container.innerHTML = "";
+
+
+                if (elections.length === 0) {
+
+                    message.textContent =
+                        "No elections available.";
+
+                    return;
+                }
+
+
+                message.style.display =
+                    "none";
+
+
+                elections.forEach(
+                    function(election) {
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+                        card.className =
+                            "action-card";
+
+
+                        /*
+                         * Status
+                         */
+
+                        let statusClass =
+                            "status-active";
+
+                        let statusText =
+                            election.status;
+
+
+                        if (
+                            election.status !==
+                            "Active"
+                        ) {
+
+                            statusClass =
+                                "status-stopped";
+
+                            statusText =
+                                "Stopped";
+
+                        }
+
+
+                        /*
+                         * Voting button
+                         */
+
+                        let buttonHTML = "";
+
+
+                        if (
+                            election.status ===
+                            "Active"
+                        ) {
+
+                            buttonHTML = `
+
+                                <button
+                                    class="btn-primary"
+                                    onclick="voteNow(${election.id})"
+                                >
+                                    Vote Now
+                                </button>
+
+                            `;
+
+                        } else {
+
+                            buttonHTML = `
+
+                                <button
+                                    class="btn-primary"
+                                    disabled
+                                >
+                                    Election Stopped
+                                </button>
+
+                            `;
+
+                        }
+
+
+                        /*
+                         * Election card
+                         */
+
+                        card.innerHTML = `
+
+                            <div class="action-icon">
+                                🗳️
+                            </div>
+
+                            <h3>
+                                ${escapeHTML(
+                                    election.name
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHTML(
+                                    election.description ||
+                                    "Online election"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Start:
+                                </strong>
+                                ${formatDate(
+                                    election.start_date
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    End:
+                                </strong>
+                                ${formatDate(
+                                    election.end_date
+                                )}
+                            </p>
+
+                            <p class="${statusClass}">
+                                <strong>
+                                    Status:
+                                </strong>
+                                ${statusText}
+                            </p>
+
+                            <div style="margin-top: 15px;">
+                                ${buttonHTML}
+                            </div>
+
+                        `;
+
+
+                        container.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Election error:",
+                    error
+                );
+
+                message.textContent =
+                    error.message ||
+                    "Unable to load elections.";
+
+                message.style.color =
+                    "red";
+
+            }
+
+        }
+
+
+        /* =========================================
+           VOTE NOW
+        ========================================= */
+
+        function voteNow(electionId) {
+
+            window.location.href =
+                "vote.html?id=" +
+                electionId;
+
+        }
+
+
+        /* =========================================
+           DATE FORMAT
+        ========================================= */
+
+        function formatDate(dateString) {
+
+            if (!dateString) {
+                return "-";
+            }
+
+
+            const date =
+                new Date(
+                    dateString
+                );
+
+
+            if (isNaN(date)) {
+                return dateString;
+            }
+
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           HTML SAFETY
+        ========================================= */
+
+        function escapeHTML(value) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                value;
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================================
+           START
+        ========================================= */
+
+        loadElections();
+
+    </script>
+
 </body>
 </html>

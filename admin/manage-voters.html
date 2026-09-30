@@ -3,16 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Manage Voters</title>
+
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-<div id="toast" class="toast"></div>
+    <header class="topbar">
 
-<script src="../js/app.js"></script>
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight Admin</span>
+        </div>
+
+        <nav>
+
+            <a href="manage-voters.html" class="active">
+                Manage Voters
+            </a>
+
+            <a href="manage-elections.html">
+                Elections
+            </a>
+
+            <a href="candidates.html">
+                Candidates
+            </a>
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="small-text">
+                    VoteRight Administration
+                </p>
+
+                <h1>
+                    Manage Voters
+                </h1>
+
+                <p>
+                    Approve, reject and manage voter registrations.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message"
+        >
+            Loading voters...
+        </div>
+
+
+        <!-- =========================
+             VOTER TABLE
+        ========================== -->
+
+        <section class="dashboard-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    Registered Voters
+                </h2>
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    onclick="loadVoters()"
+                >
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Email
+                            </th>
+
+                            <th>
+                                Roll No.
+                            </th>
+
+                            <th>
+                                Department
+                            </th>
+
+                            <th>
+                                Year
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="votersTableBody"
+                    >
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        /* =========================================
+           TOKEN
+        ========================================= */
+
+        const token =
+            localStorage.getItem(
+                "vr_token"
+            );
+
+
+        const savedUser =
+            localStorage.getItem(
+                "vr_user"
+            );
+
+
+        /* =========================================
+           CHECK ADMIN LOGIN
+        ========================================= */
+
+        if (!token || !savedUser) {
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        try {
+
+            const user =
+                JSON.parse(
+                    savedUser
+                );
+
+
+            if (
+                user.role !== "admin"
+            ) {
+
+                window.location.href =
+                    "../dashboard.html";
+
+            }
+
+        } catch (error) {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        /* =========================================
+           LOAD VOTERS
+        ========================================= */
+
+        async function loadVoters() {
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+            const tableBody =
+                document.getElementById(
+                    "votersTableBody"
+                );
+
+
+            message.textContent =
+                "Loading voters...";
+
+            message.style.color =
+                "#555";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/voters/",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                /* Token expired */
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "vr_token"
+                    );
+
+                    localStorage.removeItem(
+                        "vr_user"
+                    );
+
+                    window.location.href =
+                        "../index.html";
+
+                    return;
+
+                }
+
+
+                if (
+                    response.status === 403
+                ) {
+
+                    throw new Error(
+                        "Admin access required."
+                    );
+
+                }
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load voters."
+                    );
+
+                }
+
+
+                const voters =
+                    data.voters || [];
+
+
+                tableBody.innerHTML =
+                    "";
+
+
+                if (
+                    voters.length === 0
+                ) {
+
+                    tableBody.innerHTML = `
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                style="text-align:center;"
+                            >
+                                No registered voters found.
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                    message.textContent =
+                        "No voters registered yet.";
+
+                    return;
+
+                }
+
+
+                message.textContent =
+                    `${voters.length} voter(s) found.`;
+
+                message.style.color =
+                    "green";
+
+
+                voters.forEach(
+                    function(voter) {
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        let actionHTML = "";
+
+
+                        if (
+                            voter.status ===
+                            "Pending"
+                        ) {
+
+                            actionHTML = `
+
+                                <button
+                                    type="button"
+                                    class="btn-primary"
+                                    onclick="changeStatus(
+                                        ${voter.id},
+                                        'Approved'
+                                    )"
+                                >
+                                    Approve
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="changeStatus(
+                                        ${voter.id},
+                                        'Rejected'
+                                    )"
+                                >
+                                    Reject
+                                </button>
+
+                            `;
+
+                        } else if (
+                            voter.status ===
+                            "Approved"
+                        ) {
+
+                            actionHTML = `
+
+                                <button
+                                    type="button"
+                                    onclick="changeStatus(
+                                        ${voter.id},
+                                        'Rejected'
+                                    )"
+                                >
+                                    Reject
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="deleteVoter(
+                                        ${voter.id}
+                                    )"
+                                >
+                                    Delete
+                                </button>
+
+                            `;
+
+                        } else {
+
+                            actionHTML = `
+
+                                <button
+                                    type="button"
+                                    class="btn-primary"
+                                    onclick="changeStatus(
+                                        ${voter.id},
+                                        'Approved'
+                                    )"
+                                >
+                                    Approve
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="deleteVoter(
+                                        ${voter.id}
+                                    )"
+                                >
+                                    Delete
+                                </button>
+
+                            `;
+
+                        }
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                ${escapeHTML(
+                                    voter.name || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    voter.email || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    voter.roll_no || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    voter.department || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(
+                                    voter.year || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${escapeHTML(
+                                        voter.status || "-"
+                                    )}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${actionHTML}
+                            </td>
+
+                        `;
+
+
+                        tableBody.appendChild(
+                            row
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Load voters error:",
+                    error
+                );
+
+                message.textContent =
+                    error.message ||
+                    "Unable to load voters.";
+
+                message.style.color =
+                    "red";
+
+            }
+
+        }
+
+
+        /* =========================================
+           CHANGE VOTER STATUS
+        ========================================= */
+
+        async function changeStatus(
+            voterId,
+            status
+        ) {
+
+            const confirmText =
+                status === "Approved"
+                    ? "Approve this voter?"
+                    : "Reject this voter?";
+
+
+            if (
+                !confirm(
+                    confirmText
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/admin/voters/${voterId}/status`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    "Bearer " + token
+
+                            },
+
+                            body: JSON.stringify({
+                                status: status
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Status update failed."
+                    );
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Voter status updated."
+                );
+
+
+                loadVoters();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Status update error:",
+                    error
+                );
+
+                alert(
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        /* =========================================
+           DELETE VOTER
+        ========================================= */
+
+        async function deleteVoter(
+            voterId
+        ) {
+
+            if (
+                !confirm(
+                    "Are you sure you want to delete this voter?"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/admin/voters/${voterId}`,
+                        {
+                            method: "DELETE",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not delete voter."
+                    );
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Voter deleted."
+                );
+
+
+                loadVoters();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Delete voter error:",
+                    error
+                );
+
+                alert(
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        /* =========================================
+           HTML SAFETY
+        ========================================= */
+
+        function escapeHTML(value) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                value;
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================================
+           START
+        ========================================= */
+
+        loadVoters();
+
+    </script>
+
 </body>
 </html>

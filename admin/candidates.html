@@ -3,16 +3,943 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Candidates</title>
+
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-<div id="toast" class="toast"></div>
+    <header class="topbar">
 
-<script src="../js/app.js"></script>
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight Admin</span>
+        </div>
+
+        <nav>
+
+            <a href="manage-voters.html">
+                Manage Voters
+            </a>
+
+            <a href="manage-elections.html">
+                Elections
+            </a>
+
+            <a href="candidates.html" class="active">
+                Candidates
+            </a>
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="small-text">
+                    VoteRight Administration
+                </p>
+
+                <h1>
+                    Candidate Management
+                </h1>
+
+                <p>
+                    Add and manage candidates for an election.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ELECTION SELECTOR
+        ========================== -->
+
+        <section class="dashboard-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    Select Election
+                </h2>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="electionSelect">
+                    Election
+                </label>
+
+                <select id="electionSelect">
+
+                    <option value="">
+                        Select an election
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="electionMessage"
+                class="message"
+            ></div>
+
+        </section>
+
+
+        <!-- =========================
+             ADD CANDIDATE
+        ========================== -->
+
+        <section
+            id="candidateSection"
+            class="dashboard-card"
+            style="display:none;"
+        >
+
+            <div class="section-heading">
+
+                <h2>
+                    Add Candidate
+                </h2>
+
+            </div>
+
+
+            <form id="candidateForm">
+
+                <div class="form-group">
+
+                    <label for="candidateName">
+                        Candidate Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="candidateName"
+                        placeholder="Enter candidate name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="candidateYear">
+                        Year / Position
+                    </label>
+
+                    <input
+                        type="text"
+                        id="candidateYear"
+                        placeholder="Example: 2nd Year"
+                    >
+
+                </div>
+
+
+                <div
+                    id="candidateMessage"
+                    class="message"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="addCandidateBtn"
+                >
+                    Add Candidate
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================
+             CANDIDATE LIST
+        ========================== -->
+
+        <section
+            id="candidateListSection"
+            class="dashboard-card"
+            style="display:none;"
+        >
+
+            <div class="section-heading">
+
+                <h2>
+                    Candidates
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="loadCandidates()"
+                >
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div
+                id="listMessage"
+                class="message"
+            ></div>
+
+
+            <div
+                id="candidatesContainer"
+                class="quick-actions"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        /* =========================================
+           AUTH
+        ========================================= */
+
+        const token =
+            localStorage.getItem(
+                "vr_token"
+            );
+
+        const savedUser =
+            localStorage.getItem(
+                "vr_user"
+            );
+
+
+        if (!token || !savedUser) {
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        try {
+
+            const user =
+                JSON.parse(
+                    savedUser
+                );
+
+
+            if (
+                user.role !== "admin"
+            ) {
+
+                window.location.href =
+                    "../dashboard.html";
+
+            }
+
+        } catch (error) {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        /* =========================================
+           ELEMENTS
+        ========================================= */
+
+        const electionSelect =
+            document.getElementById(
+                "electionSelect"
+            );
+
+        const candidateSection =
+            document.getElementById(
+                "candidateSection"
+            );
+
+        const candidateListSection =
+            document.getElementById(
+                "candidateListSection"
+            );
+
+
+        /* =========================================
+           LOAD ELECTIONS
+        ========================================= */
+
+        async function loadElections() {
+
+            const message =
+                document.getElementById(
+                    "electionMessage"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/elections/"
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load elections."
+                    );
+
+                }
+
+
+                const elections =
+                    data.elections || [];
+
+
+                electionSelect.innerHTML = `
+
+                    <option value="">
+                        Select an election
+                    </option>
+
+                `;
+
+
+                elections.forEach(
+                    function(election) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            election.id;
+
+
+                        option.textContent =
+                            `${election.name} - ${election.status}`;
+
+
+                        electionSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+                /*
+                 * Open election from URL
+                 *
+                 * Example:
+                 * candidates.html?id=5
+                 */
+
+                const params =
+                    new URLSearchParams(
+                        window.location.search
+                    );
+
+
+                const electionId =
+                    params.get(
+                        "id"
+                    );
+
+
+                if (electionId) {
+
+                    electionSelect.value =
+                        electionId;
+
+
+                    loadCandidates();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Election loading error:",
+                    error
+                );
+
+                message.textContent =
+                    error.message;
+
+                message.style.color =
+                    "red";
+
+            }
+
+        }
+
+
+        /* =========================================
+           ELECTION CHANGED
+        ========================================= */
+
+        electionSelect.addEventListener(
+            "change",
+            function() {
+
+                const electionId =
+                    electionSelect.value;
+
+
+                if (!electionId) {
+
+                    candidateSection.style.display =
+                        "none";
+
+                    candidateListSection.style.display =
+                        "none";
+
+                    return;
+
+                }
+
+
+                /*
+                 * Update URL
+                 */
+
+                window.history.replaceState(
+                    null,
+                    "",
+                    `candidates.html?id=${electionId}`
+                );
+
+
+                loadCandidates();
+
+            }
+        );
+
+
+        /* =========================================
+           LOAD CANDIDATES
+        ========================================= */
+
+        async function loadCandidates() {
+
+            const electionId =
+                electionSelect.value;
+
+
+            if (!electionId) {
+
+                return;
+
+            }
+
+
+            const listMessage =
+                document.getElementById(
+                    "listMessage"
+                );
+
+
+            const container =
+                document.getElementById(
+                    "candidatesContainer"
+                );
+
+
+            candidateSection.style.display =
+                "block";
+
+            candidateListSection.style.display =
+                "block";
+
+
+            listMessage.textContent =
+                "Loading candidates...";
+
+            listMessage.style.color =
+                "#555";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/candidates/election/${electionId}`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load candidates."
+                    );
+
+                }
+
+
+                const candidates =
+                    data.candidates || [];
+
+
+                container.innerHTML =
+                    "";
+
+
+                if (
+                    candidates.length === 0
+                ) {
+
+                    listMessage.textContent =
+                        "No candidates added yet.";
+
+                    return;
+
+                }
+
+
+                listMessage.textContent =
+                    `${candidates.length} candidate(s) found.`;
+
+                listMessage.style.color =
+                    "green";
+
+
+                candidates.forEach(
+                    function(candidate) {
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        card.className =
+                            "action-card";
+
+
+                        card.innerHTML = `
+
+                            <div class="action-icon">
+                                👤
+                            </div>
+
+                            <h3>
+                                ${escapeHTML(
+                                    candidate.name
+                                )}
+                            </h3>
+
+                            <p>
+                                <strong>
+                                    Year / Position:
+                                </strong>
+
+                                ${escapeHTML(
+                                    candidate.year_position ||
+                                    "-"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Votes:
+                                </strong>
+
+                                ${candidate.vote_count || 0}
+                            </p>
+
+                            <button
+                                type="button"
+                                onclick="deleteCandidate(
+                                    ${candidate.id}
+                                )"
+                            >
+                                Delete Candidate
+                            </button>
+
+                        `;
+
+
+                        container.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Candidate loading error:",
+                    error
+                );
+
+                listMessage.textContent =
+                    error.message ||
+                    "Unable to load candidates.";
+
+                listMessage.style.color =
+                    "red";
+
+            }
+
+        }
+
+
+        /* =========================================
+           ADD CANDIDATE
+        ========================================= */
+
+        const candidateForm =
+            document.getElementById(
+                "candidateForm"
+            );
+
+
+        candidateForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const electionId =
+                    electionSelect.value;
+
+
+                const name =
+                    document.getElementById(
+                        "candidateName"
+                    ).value.trim();
+
+
+                const yearPosition =
+                    document.getElementById(
+                        "candidateYear"
+                    ).value.trim();
+
+
+                const message =
+                    document.getElementById(
+                        "candidateMessage"
+                    );
+
+
+                const button =
+                    document.getElementById(
+                        "addCandidateBtn"
+                    );
+
+
+                if (!electionId) {
+
+                    message.textContent =
+                        "Please select an election.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+
+                }
+
+
+                if (!name) {
+
+                    message.textContent =
+                        "Candidate name is required.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+
+                }
+
+
+                message.textContent =
+                    "Adding candidate...";
+
+                message.style.color =
+                    "#555";
+
+                button.disabled =
+                    true;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/candidates/",
+                            {
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "Authorization":
+                                        "Bearer " + token
+
+                                },
+
+                                body: JSON.stringify({
+
+                                    election_id:
+                                        Number(
+                                            electionId
+                                        ),
+
+                                    name:
+                                        name,
+
+                                    year_position:
+                                        yearPosition
+
+                                })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Could not add candidate."
+                        );
+
+                    }
+
+
+                    message.textContent =
+                        data.message ||
+                        "Candidate added successfully.";
+
+                    message.style.color =
+                        "green";
+
+
+                    candidateForm.reset();
+
+
+                    loadCandidates();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Add candidate error:",
+                        error
+                    );
+
+                    message.textContent =
+                        error.message ||
+                        "Candidate could not be added.";
+
+                    message.style.color =
+                        "red";
+
+                } finally {
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        /* =========================================
+           DELETE CANDIDATE
+        ========================================= */
+
+        async function deleteCandidate(
+            candidateId
+        ) {
+
+            if (
+                !confirm(
+                    "Are you sure you want to delete this candidate?"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/candidates/${candidateId}`,
+                        {
+                            method: "DELETE",
+
+                            headers: {
+
+                                "Authorization":
+                                    "Bearer " + token
+
+                            }
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not delete candidate."
+                    );
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Candidate deleted successfully."
+                );
+
+
+                loadCandidates();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Delete candidate error:",
+                    error
+                );
+
+                alert(
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        /* =========================================
+           HTML SAFETY
+        ========================================= */
+
+        function escapeHTML(
+            value
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                value;
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================================
+           START
+        ========================================= */
+
+        loadElections();
+
+    </script>
+
 </body>
 </html>

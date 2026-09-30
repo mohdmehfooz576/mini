@@ -3,16 +3,982 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Manage Elections</title>
+
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-<div id="toast" class="toast"></div>
+    <header class="topbar">
 
-<script src="../js/app.js"></script>
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight Admin</span>
+        </div>
+
+        <nav>
+
+            <a href="manage-voters.html">
+                Manage Voters
+            </a>
+
+            <a href="manage-elections.html" class="active">
+                Elections
+            </a>
+
+            <a href="candidates.html">
+                Candidates
+            </a>
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="small-text">
+                    VoteRight Administration
+                </p>
+
+                <h1>
+                    Manage Elections
+                </h1>
+
+                <p>
+                    Create and control your elections.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ACTION BAR
+        ========================== -->
+
+        <section class="dashboard-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    Elections
+                </h2>
+
+                <div>
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        onclick="openCreateModal()"
+                    >
+                        + Create Election
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="loadElections()"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="message"
+                class="message"
+            >
+                Loading elections...
+            </div>
+
+
+            <!-- ELECTION LIST -->
+
+            <div
+                id="electionsContainer"
+                class="quick-actions"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         CREATE ELECTION MODAL
+    ========================== -->
+
+    <div
+        id="createModal"
+        class="modal"
+        style="display:none;"
+    >
+
+        <div class="modal-content">
+
+            <div class="section-heading">
+
+                <h2>
+                    Create Election
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="closeCreateModal()"
+                >
+                    ✕
+                </button>
+
+            </div>
+
+
+            <form id="createElectionForm">
+
+                <div class="form-group">
+
+                    <label for="electionName">
+                        Election Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="electionName"
+                        placeholder="Example: BCA Department Representative"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="electionDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="electionDescription"
+                        placeholder="Enter election description"
+                        rows="4"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="startDate">
+                        Start Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="startDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="endDate">
+                        End Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="endDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div
+                    id="createMessage"
+                    class="message"
+                ></div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        onclick="closeCreateModal()"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        id="createBtn"
+                    >
+                        Create Election
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================================
+           AUTH
+        ========================================= */
+
+        const token =
+            localStorage.getItem(
+                "vr_token"
+            );
+
+        const savedUser =
+            localStorage.getItem(
+                "vr_user"
+            );
+
+
+        if (!token || !savedUser) {
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        try {
+
+            const user =
+                JSON.parse(
+                    savedUser
+                );
+
+
+            if (
+                user.role !== "admin"
+            ) {
+
+                window.location.href =
+                    "../dashboard.html";
+
+            }
+
+        } catch (error) {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "../index.html";
+
+        }
+
+
+        /* =========================================
+           LOAD ELECTIONS
+        ========================================= */
+
+        async function loadElections() {
+
+            const container =
+                document.getElementById(
+                    "electionsContainer"
+                );
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            message.textContent =
+                "Loading elections...";
+
+            message.style.color =
+                "#555";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/elections/",
+                        {
+                            method: "GET"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load elections."
+                    );
+
+                }
+
+
+                const elections =
+                    data.elections || [];
+
+
+                container.innerHTML =
+                    "";
+
+
+                if (
+                    elections.length === 0
+                ) {
+
+                    message.textContent =
+                        "No elections created yet.";
+
+                    return;
+
+                }
+
+
+                message.textContent =
+                    `${elections.length} election(s) found.`;
+
+                message.style.color =
+                    "green";
+
+
+                elections.forEach(
+                    function(election) {
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+                        card.className =
+                            "action-card";
+
+
+                        const isActive =
+                            election.status ===
+                            "Active";
+
+
+                        const statusText =
+                            isActive
+                                ? "Active"
+                                : "Stopped";
+
+
+                        let statusClass =
+                            isActive
+                                ? "status-active"
+                                : "status-stopped";
+
+
+                        const statusButton =
+                            isActive
+
+                            ? `
+
+                                <button
+                                    type="button"
+                                    onclick="changeStatus(
+                                        ${election.id},
+                                        'Stopped'
+                                    )"
+                                >
+                                    Stop Election
+                                </button>
+
+                              `
+
+                            : `
+
+                                <button
+                                    type="button"
+                                    class="btn-primary"
+                                    onclick="changeStatus(
+                                        ${election.id},
+                                        'Active'
+                                    )"
+                                >
+                                    Reopen Election
+                                </button>
+
+                              `;
+
+
+                        card.innerHTML = `
+
+                            <div class="action-icon">
+                                🗳️
+                            </div>
+
+                            <h3>
+                                ${escapeHTML(
+                                    election.name
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHTML(
+                                    election.description ||
+                                    "No description"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Start:
+                                </strong>
+                                ${formatDate(
+                                    election.start_date
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    End:
+                                </strong>
+                                ${formatDate(
+                                    election.end_date
+                                )}
+                            </p>
+
+                            <p class="${statusClass}">
+                                <strong>
+                                    Status:
+                                </strong>
+                                ${statusText}
+                            </p>
+
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:8px;
+                                    flex-wrap:wrap;
+                                    margin-top:15px;
+                                "
+                            >
+
+                                <button
+                                    type="button"
+                                    class="btn-primary"
+                                    onclick="openCandidates(
+                                        ${election.id}
+                                    )"
+                                >
+                                    Candidates
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onclick="openResults(
+                                        ${election.id}
+                                    )"
+                                >
+                                    Results
+                                </button>
+
+                                ${statusButton}
+
+                            </div>
+
+                        `;
+
+
+                        container.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Election loading error:",
+                    error
+                );
+
+                message.textContent =
+                    error.message ||
+                    "Unable to load elections.";
+
+                message.style.color =
+                    "red";
+
+            }
+
+        }
+
+
+        /* =========================================
+           CREATE MODAL
+        ========================================= */
+
+        function openCreateModal() {
+
+            document.getElementById(
+                "createModal"
+            ).style.display =
+                "flex";
+
+        }
+
+
+        function closeCreateModal() {
+
+            document.getElementById(
+                "createModal"
+            ).style.display =
+                "none";
+
+            document.getElementById(
+                "createElectionForm"
+            ).reset();
+
+            document.getElementById(
+                "createMessage"
+            ).textContent =
+                "";
+
+        }
+
+
+        /* =========================================
+           CREATE ELECTION
+        ========================================= */
+
+        const createForm =
+            document.getElementById(
+                "createElectionForm"
+            );
+
+
+        createForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const name =
+                    document.getElementById(
+                        "electionName"
+                    ).value.trim();
+
+
+                const description =
+                    document.getElementById(
+                        "electionDescription"
+                    ).value.trim();
+
+
+                const startDate =
+                    document.getElementById(
+                        "startDate"
+                    ).value;
+
+
+                const endDate =
+                    document.getElementById(
+                        "endDate"
+                    ).value;
+
+
+                const createMessage =
+                    document.getElementById(
+                        "createMessage"
+                    );
+
+
+                const createBtn =
+                    document.getElementById(
+                        "createBtn"
+                    );
+
+
+                if (
+                    startDate &&
+                    endDate &&
+                    startDate > endDate
+                ) {
+
+                    createMessage.textContent =
+                        "End date cannot be before start date.";
+
+                    createMessage.style.color =
+                        "red";
+
+                    return;
+
+                }
+
+
+                createMessage.textContent =
+                    "Creating election...";
+
+                createMessage.style.color =
+                    "#555";
+
+                createBtn.disabled =
+                    true;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/elections/",
+                            {
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "Authorization":
+                                        "Bearer " + token
+
+                                },
+
+                                body: JSON.stringify({
+
+                                    name:
+                                        name,
+
+                                    description:
+                                        description,
+
+                                    start_date:
+                                        startDate,
+
+                                    end_date:
+                                        endDate
+
+                                })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Election creation failed."
+                        );
+
+                    }
+
+
+                    createMessage.textContent =
+                        data.message ||
+                        "Election created successfully.";
+
+                    createMessage.style.color =
+                        "green";
+
+
+                    setTimeout(
+                        function() {
+
+                            closeCreateModal();
+
+                            loadElections();
+
+                        },
+                        700
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Create election error:",
+                        error
+                    );
+
+                    createMessage.textContent =
+                        error.message ||
+                        "Election creation failed.";
+
+                    createMessage.style.color =
+                        "red";
+
+                } finally {
+
+                    createBtn.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        /* =========================================
+           STOP / REOPEN
+        ========================================= */
+
+        async function changeStatus(
+            electionId,
+            status
+        ) {
+
+            const action =
+                status === "Stopped"
+                    ? "stop"
+                    : "reopen";
+
+
+            const confirmation =
+                status === "Stopped"
+
+                    ? "Are you sure you want to stop this election?"
+
+                    : "Are you sure you want to reopen this election?";
+
+
+            if (
+                !confirm(
+                    confirmation
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/elections/${electionId}/status`,
+                        {
+                            method: "PUT",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Authorization":
+                                    "Bearer " + token
+
+                            },
+
+                            body: JSON.stringify({
+
+                                status:
+                                    status
+
+                            })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        `Could not ${action} election.`
+                    );
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Election status updated."
+                );
+
+
+                loadElections();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Status error:",
+                    error
+                );
+
+                alert(
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        /* =========================================
+           CANDIDATES
+        ========================================= */
+
+        function openCandidates(
+            electionId
+        ) {
+
+            window.location.href =
+                `candidates.html?id=${electionId}`;
+
+        }
+
+
+        /* =========================================
+           RESULTS
+        ========================================= */
+
+        function openResults(
+            electionId
+        ) {
+
+            window.location.href =
+                `../results.html?id=${electionId}`;
+
+        }
+
+
+        /* =========================================
+           DATE FORMAT
+        ========================================= */
+
+        function formatDate(
+            dateString
+        ) {
+
+            if (!dateString) {
+                return "-";
+            }
+
+
+            const date =
+                new Date(
+                    dateString
+                );
+
+
+            if (isNaN(date)) {
+                return dateString;
+            }
+
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+        }
+
+
+        /* =========================================
+           HTML SAFETY
+        ========================================= */
+
+        function escapeHTML(
+            value
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                value;
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================================
+           START
+        ========================================= */
+
+        loadElections();
+
+    </script>
+
 </body>
 </html>
