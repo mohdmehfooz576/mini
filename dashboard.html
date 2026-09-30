@@ -3,16 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Dashboard</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-<div id="toast" class="toast"></div>
+    <header class="topbar">
 
-<script src="js/app.js"></script>
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight</span>
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html" class="active">
+                Dashboard
+            </a>
+
+            <a href="elections.html">
+                Elections
+            </a>
+
+            <a href="my-votes.html">
+                My Votes
+            </a>
+
+            <a href="results.html">
+                Results
+            </a>
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="dashboard-container">
+
+        <!-- Welcome -->
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="small-text">
+                    Welcome back
+                </p>
+
+                <h1 id="welcomeName">
+                    Loading...
+                </h1>
+
+                <p>
+                    Manage your voting activity
+                    from your dashboard.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PROFILE CARD
+        ========================== -->
+
+        <section class="dashboard-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    My Profile
+                </h2>
+
+            </div>
+
+
+            <div
+                id="profileMessage"
+                class="message"
+            >
+                Loading profile...
+            </div>
+
+
+            <div
+                id="profileData"
+                class="profile-grid"
+                style="display: none;"
+            >
+
+                <div class="profile-item">
+
+                    <span>Name</span>
+
+                    <strong id="profileName">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-item">
+
+                    <span>Email</span>
+
+                    <strong id="profileEmail">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-item">
+
+                    <span>Roll Number</span>
+
+                    <strong id="profileRoll">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-item">
+
+                    <span>Department</span>
+
+                    <strong id="profileDepartment">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-item">
+
+                    <span>Year</span>
+
+                    <strong id="profileYear">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="profile-item">
+
+                    <span>Voter Status</span>
+
+                    <strong id="profileStatus">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             QUICK ACTIONS
+        ========================== -->
+
+        <section class="dashboard-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    Quick Actions
+                </h2>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+                <a
+                    href="elections.html"
+                    class="action-card"
+                >
+
+                    <div class="action-icon">
+                        🗳️
+                    </div>
+
+                    <h3>
+                        Elections
+                    </h3>
+
+                    <p>
+                        View available elections
+                        and cast your vote.
+                    </p>
+
+                </a>
+
+
+                <a
+                    href="my-votes.html"
+                    class="action-card"
+                >
+
+                    <div class="action-icon">
+                        📋
+                    </div>
+
+                    <h3>
+                        My Votes
+                    </h3>
+
+                    <p>
+                        View your voting history.
+                    </p>
+
+                </a>
+
+
+                <a
+                    href="results.html"
+                    class="action-card"
+                >
+
+                    <div class="action-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Results
+                    </h3>
+
+                    <p>
+                        View election results.
+                    </p>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             LOGOUT
+        ========================== -->
+
+        <div class="logout-area">
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="btn-primary"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        /*
+         * ==========================================
+         * CHECK LOGIN
+         * ==========================================
+         */
+
+        const token =
+            localStorage.getItem(
+                "vr_token"
+            );
+
+        const savedUser =
+            localStorage.getItem(
+                "vr_user"
+            );
+
+
+        if (!token || !savedUser) {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        /*
+         * ==========================================
+         * LOGOUT
+         * ==========================================
+         */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "index.html";
+        }
+
+
+        /*
+         * ==========================================
+         * LOAD VOTER PROFILE
+         * ==========================================
+         */
+
+        async function loadProfile() {
+
+            const profileMessage =
+                document.getElementById(
+                    "profileMessage"
+                );
+
+            const profileData =
+                document.getElementById(
+                    "profileData"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/voters/me",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                /*
+                 * Token invalid / expired
+                 */
+
+                if (
+                    response.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "vr_token"
+                    );
+
+                    localStorage.removeItem(
+                        "vr_user"
+                    );
+
+                    window.location.href =
+                        "index.html";
+
+                    return;
+                }
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load profile"
+                    );
+                }
+
+
+                const voter =
+                    data.voter;
+
+
+                /*
+                 * Welcome name
+                 */
+
+                document.getElementById(
+                    "welcomeName"
+                ).textContent =
+                    "Hello, " +
+                    voter.name;
+
+
+                /*
+                 * Profile fields
+                 */
+
+                document.getElementById(
+                    "profileName"
+                ).textContent =
+                    voter.name || "-";
+
+
+                document.getElementById(
+                    "profileEmail"
+                ).textContent =
+                    voter.email || "-";
+
+
+                document.getElementById(
+                    "profileRoll"
+                ).textContent =
+                    voter.roll_no || "-";
+
+
+                document.getElementById(
+                    "profileDepartment"
+                ).textContent =
+                    voter.department || "-";
+
+
+                document.getElementById(
+                    "profileYear"
+                ).textContent =
+                    voter.year || "-";
+
+
+                document.getElementById(
+                    "profileStatus"
+                ).textContent =
+                    voter.status || "-";
+
+
+                profileMessage.style.display =
+                    "none";
+
+                profileData.style.display =
+                    "grid";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Profile error:",
+                    error
+                );
+
+                profileMessage.textContent =
+                    error.message ||
+                    "Unable to load profile.";
+
+                profileMessage.style.color =
+                    "red";
+            }
+        }
+
+
+        /*
+         * ==========================================
+         * START
+         * ==========================================
+         */
+
+        loadProfile();
+
+    </script>
+
 </body>
 </html>

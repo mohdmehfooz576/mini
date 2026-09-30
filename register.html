@@ -3,127 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Registration</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="auth-body">
+<body>
 
-<div class="auth-container">
-    <div class="auth-card wide">
+    <div class="auth-container">
 
-        <div class="brand">
-            <div class="logo">✓</div>
-            <div>
+        <div class="auth-card">
+
+            <div class="logo">
+                <div class="logo-icon">✓</div>
                 <h1>VoteRight</h1>
-                <p>Voter Registration</p>
             </div>
-        </div>
 
-        <form id="registrationForm">
+            <p class="subtitle">
+                Create your voter account
+            </p>
 
-            <div class="form-grid">
+            <h2>Voter Registration</h2>
 
-                <div>
-                    <label>Full Name</label>
+            <form id="registerForm">
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+
                     <input
                         type="text"
-                        id="regName"
-                        placeholder="Enter full name"
+                        id="name"
+                        placeholder="Enter your full name"
                         required
                     >
                 </div>
 
-                <div>
-                    <label>Roll Number</label>
-                    <input
-                        type="text"
-                        id="regRoll"
-                        placeholder="Enter roll number"
-                        required
-                    >
-                </div>
 
-                <div>
-                    <label>Email</label>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+
                     <input
                         type="email"
-                        id="regEmail"
-                        placeholder="Enter email"
+                        id="email"
+                        placeholder="Enter your email"
                         required
                     >
                 </div>
 
-                <div>
-                    <label>Mobile</label>
+
+                <div class="form-group">
+                    <label for="roll_no">Roll Number</label>
+
+                    <input
+                        type="text"
+                        id="roll_no"
+                        placeholder="Enter your roll number"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+
                     <input
                         type="tel"
-                        id="regMobile"
-                        placeholder="Enter mobile number"
-                        required
+                        id="mobile"
+                        placeholder="Enter your mobile number"
                     >
                 </div>
 
-                <div>
-                    <label>Department</label>
-                    <select id="regDepartment" required>
-                        <option value="">Select Department</option>
-                        <option>BCA</option>
-                        <option>BBA</option>
-                        <option>BA</option>
-                        <option>BSc</option>
-                        <option>BCOM</option>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+
+                    <input
+                        type="text"
+                        id="department"
+                        placeholder="Example: BCA"
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="year">Year</label>
+
+                    <select id="year">
+
+                        <option value="">
+                            Select Year
+                        </option>
+
+                        <option value="1st Year">
+                            1st Year
+                        </option>
+
+                        <option value="2nd Year">
+                            2nd Year
+                        </option>
+
+                        <option value="3rd Year">
+                            3rd Year
+                        </option>
+
                     </select>
                 </div>
 
-                <div>
-                    <label>Year</label>
-                    <select id="regYear" required>
-                        <option value="">Select Year</option>
-                        <option>1st Year</option>
-                        <option>2nd Year</option>
-                        <option>3rd Year</option>
-                    </select>
-                </div>
 
-                <div>
-                    <label>Password</label>
+                <div class="form-group">
+                    <label for="password">Password</label>
+
                     <input
                         type="password"
-                        id="regPassword"
-                        placeholder="Create password"
+                        id="password"
+                        placeholder="Create a password"
                         required
                     >
                 </div>
 
-                <div>
-                    <label>Confirm Password</label>
+
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
+
                     <input
                         type="password"
-                        id="regConfirmPassword"
-                        placeholder="Confirm password"
+                        id="confirmPassword"
+                        placeholder="Confirm your password"
                         required
                     >
                 </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="registerBtn"
+                >
+                    Register
+                </button>
+
+            </form>
+
+
+            <div id="message"></div>
+
+
+            <div class="register-link">
+
+                Already have an account?
+
+                <a href="index.html">
+                    Login here
+                </a>
 
             </div>
 
-            <button type="submit" class="btn primary full">
-                Register
-            </button>
-
-        </form>
-
-        <div class="auth-footer">
-            <p>Already registered?</p>
-            <a href="index.html">Back to Login</a>
         </div>
 
     </div>
-</div>
 
-<div id="toast" class="toast"></div>
 
-<script src="js/app.js"></script>
+    <script>
+
+        const registerForm =
+            document.getElementById(
+                "registerForm"
+            );
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+        const registerBtn =
+            document.getElementById(
+                "registerBtn"
+            );
+
+
+        registerForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const name =
+                    document.getElementById(
+                        "name"
+                    ).value.trim();
+
+                const email =
+                    document.getElementById(
+                        "email"
+                    ).value.trim();
+
+                const roll_no =
+                    document.getElementById(
+                        "roll_no"
+                    ).value.trim();
+
+                const mobile =
+                    document.getElementById(
+                        "mobile"
+                    ).value.trim();
+
+                const department =
+                    document.getElementById(
+                        "department"
+                    ).value.trim();
+
+                const year =
+                    document.getElementById(
+                        "year"
+                    ).value;
+
+                const password =
+                    document.getElementById(
+                        "password"
+                    ).value;
+
+                const confirmPassword =
+                    document.getElementById(
+                        "confirmPassword"
+                    ).value;
+
+
+                /*
+                 * Check password
+                 */
+
+                if (
+                    password !==
+                    confirmPassword
+                ) {
+
+                    message.textContent =
+                        "Passwords do not match.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                message.textContent =
+                    "Creating account...";
+
+                message.style.color =
+                    "#555";
+
+                registerBtn.disabled = true;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/auth/register",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    name: name,
+
+                                    email: email,
+
+                                    password: password,
+
+                                    roll_no: roll_no,
+
+                                    mobile: mobile,
+
+                                    department:
+                                        department,
+
+                                    year: year
+
+                                })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Registration failed"
+                        );
+                    }
+
+
+                    message.textContent =
+                        data.message ||
+                        "Registration successful.";
+
+                    message.style.color =
+                        "green";
+
+
+                    /*
+                     * Registration successful.
+                     * User must wait for
+                     * admin approval.
+                     */
+
+                    registerBtn.disabled =
+                        true;
+
+
+                    setTimeout(
+                        function() {
+
+                            window.location.href =
+                                "index.html";
+
+                        },
+                        2000
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Registration error:",
+                        error
+                    );
+
+                    message.textContent =
+                        error.message ||
+                        "Something went wrong.";
+
+                    message.style.color =
+                        "red";
+
+                    registerBtn.disabled =
+                        false;
+                }
+
+            }
+        );
+
+    </script>
+
 </body>
 </html>
