@@ -3,16 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>VoteRight - Registration</title>
-
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .receipt-container {
+            display: none;
+            width: 100%;
+            max-width: 750px;
+            margin: 30px auto;
+            padding: 25px;
+        }
+
+        .receipt {
+            background: #fff;
+            border: 2px solid #6258c9;
+            border-radius: 12px;
+            padding: 35px;
+            color: #222;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #6258c9;
+            padding-bottom: 20px;
+            margin-bottom: 22px;
+        }
+
+        .receipt-header h1 {
+            color: #40369b;
+            margin-bottom: 5px;
+        }
+
+        .receipt-header p {
+            color: #666;
+        }
+
+        .receipt-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #29234f;
+        }
+
+        .receipt-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .receipt-item {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .receipt-item small {
+            display: block;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .receipt-item strong {
+            font-size: 15px;
+        }
+
+        .receipt-status {
+            margin-top: 25px;
+            padding: 14px;
+            background: #fff4d6;
+            color: #805900;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .receipt-note {
+            margin-top: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .receipt-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+
+        .receipt-actions button,
+        .receipt-actions a {
+            border: none;
+            padding: 12px 22px;
+            border-radius: 7px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .print-btn {
+            background: #6258c9;
+            color: white;
+        }
+
+        .login-btn {
+            background: #eee;
+            color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .receipt-container {
+                padding: 12px;
+            }
+
+            .receipt {
+                padding: 20px;
+            }
+
+            .receipt-details {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white !important;
+            }
+
+            .auth-container,
+            .receipt-actions {
+                display: none !important;
+            }
+
+            .receipt-container {
+                display: block !important;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .receipt {
+                border: 2px solid #333;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 25px;
+            }
+
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="auth-container">
-
+    <!-- Registration Form -->
+    <div class="auth-container" id="registrationSection">
         <div class="auth-card">
 
             <div class="logo">
@@ -20,17 +171,13 @@
                 <h1>VoteRight</h1>
             </div>
 
-            <p class="subtitle">
-                Create your voter account
-            </p>
-
+            <p class="subtitle">Create your voter account</p>
             <h2>Voter Registration</h2>
 
             <form id="registerForm">
 
                 <div class="form-group">
                     <label for="name">Full Name</label>
-
                     <input
                         type="text"
                         id="name"
@@ -39,10 +186,8 @@
                     >
                 </div>
 
-
                 <div class="form-group">
                     <label for="email">Email Address</label>
-
                     <input
                         type="email"
                         id="email"
@@ -51,10 +196,8 @@
                     >
                 </div>
 
-
                 <div class="form-group">
                     <label for="roll_no">Roll Number</label>
-
                     <input
                         type="text"
                         id="roll_no"
@@ -63,10 +206,8 @@
                     >
                 </div>
 
-
                 <div class="form-group">
                     <label for="mobile">Mobile Number</label>
-
                     <input
                         type="tel"
                         id="mobile"
@@ -74,10 +215,8 @@
                     >
                 </div>
 
-
                 <div class="form-group">
                     <label for="department">Department</label>
-
                     <input
                         type="text"
                         id="department"
@@ -85,35 +224,18 @@
                     >
                 </div>
 
-
                 <div class="form-group">
                     <label for="year">Year</label>
-
                     <select id="year">
-
-                        <option value="">
-                            Select Year
-                        </option>
-
-                        <option value="1st Year">
-                            1st Year
-                        </option>
-
-                        <option value="2nd Year">
-                            2nd Year
-                        </option>
-
-                        <option value="3rd Year">
-                            3rd Year
-                        </option>
-
+                        <option value="">Select Year</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
                     </select>
                 </div>
 
-
                 <div class="form-group">
                     <label for="password">Password</label>
-
                     <input
                         type="password"
                         id="password"
@@ -122,12 +244,8 @@
                     >
                 </div>
 
-
                 <div class="form-group">
-                    <label for="confirmPassword">
-                        Confirm Password
-                    </label>
-
+                    <label for="confirmPassword">Confirm Password</label>
                     <input
                         type="password"
                         id="confirmPassword"
@@ -136,7 +254,6 @@
                     >
                 </div>
 
-
                 <button
                     type="submit"
                     class="btn-primary"
@@ -144,108 +261,214 @@
                 >
                     Register
                 </button>
-
             </form>
 
-
-            <div id="message"></div>
-
+            <div id="message" role="status"></div>
 
             <div class="register-link">
-
                 Already have an account?
-
-                <a href="index.html">
-                    Login here
-                </a>
-
+                <a href="index.html">Login here</a>
             </div>
 
         </div>
+    </div>
 
+
+    <!-- Printable Registration Receipt -->
+    <div class="receipt-container" id="receiptSection">
+
+        <div class="receipt">
+
+            <div class="receipt-header">
+                <h1>✓ VoteRight</h1>
+                <p>Your Voice, Your Vote</p>
+            </div>
+
+            <h2 class="receipt-title">
+                Voter Registration Receipt
+            </h2>
+
+            <div class="receipt-details">
+
+                <div class="receipt-item">
+                    <small>Application Reference</small>
+                    <strong id="receiptRef"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Registration Date</small>
+                    <strong id="receiptDate"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Full Name</small>
+                    <strong id="receiptName"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Roll Number</small>
+                    <strong id="receiptRoll"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Email Address</small>
+                    <strong id="receiptEmail"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Mobile Number</small>
+                    <strong id="receiptMobile"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Department</small>
+                    <strong id="receiptDepartment"></strong>
+                </div>
+
+                <div class="receipt-item">
+                    <small>Year</small>
+                    <strong id="receiptYear"></strong>
+                </div>
+
+            </div>
+
+            <div class="receipt-status">
+                Registration Status: Pending Admin Approval
+            </div>
+
+            <p class="receipt-note">
+                Your registration has been submitted successfully.
+                Please keep this receipt for your records.
+                You can log in after your voter registration
+                has been approved by the administrator.
+                This receipt confirms submission, not approval.
+            </p>
+
+        </div>
+
+        <div class="receipt-actions">
+
+            <button
+                class="print-btn"
+                type="button"
+                onclick="window.print()"
+            >
+                Print / Save as PDF
+            </button>
+
+            <a href="index.html" class="login-btn">
+                Go to Login
+            </a>
+
+        </div>
     </div>
 
 
     <script>
-
         const registerForm =
-            document.getElementById(
-                "registerForm"
-            );
+            document.getElementById("registerForm");
 
         const message =
-            document.getElementById(
-                "message"
-            );
+            document.getElementById("message");
 
         const registerBtn =
-            document.getElementById(
-                "registerBtn"
+            document.getElementById("registerBtn");
+
+
+        // Fill receipt fields safely
+        function setReceiptValue(id, value) {
+            document.getElementById(id).textContent =
+                value || "Not provided";
+        }
+
+
+        // Show receipt using backend application reference
+        function showReceipt(details, applicationRef) {
+
+            const now = new Date();
+
+            setReceiptValue(
+                "receiptRef",
+                applicationRef
             );
 
+            setReceiptValue(
+                "receiptDate",
+                now.toLocaleString()
+            );
 
+            setReceiptValue(
+                "receiptName",
+                details.name
+            );
+
+            setReceiptValue(
+                "receiptRoll",
+                details.roll_no
+            );
+
+            setReceiptValue(
+                "receiptEmail",
+                details.email
+            );
+
+            setReceiptValue(
+                "receiptMobile",
+                details.mobile
+            );
+
+            setReceiptValue(
+                "receiptDepartment",
+                details.department
+            );
+
+            setReceiptValue(
+                "receiptYear",
+                details.year
+            );
+
+            document.getElementById(
+                "registrationSection"
+            ).style.display = "none";
+
+            document.getElementById(
+                "receiptSection"
+            ).style.display = "block";
+
+            window.scrollTo(0, 0);
+        }
+
+
+        // Handle registration
         registerForm.addEventListener(
             "submit",
             async function(event) {
 
                 event.preventDefault();
 
-
-                const name =
-                    document.getElementById(
-                        "name"
-                    ).value.trim();
-
-                const email =
-                    document.getElementById(
-                        "email"
-                    ).value.trim();
-
-                const roll_no =
-                    document.getElementById(
-                        "roll_no"
-                    ).value.trim();
-
-                const mobile =
-                    document.getElementById(
-                        "mobile"
-                    ).value.trim();
-
-                const department =
-                    document.getElementById(
-                        "department"
-                    ).value.trim();
-
-                const year =
-                    document.getElementById(
-                        "year"
-                    ).value;
+                const details = {
+                    name: document.getElementById("name").value.trim(),
+                    email: document.getElementById("email").value.trim(),
+                    roll_no: document.getElementById("roll_no").value.trim(),
+                    mobile: document.getElementById("mobile").value.trim(),
+                    department: document.getElementById("department").value.trim(),
+                    year: document.getElementById("year").value
+                };
 
                 const password =
-                    document.getElementById(
-                        "password"
-                    ).value;
+                    document.getElementById("password").value;
 
                 const confirmPassword =
-                    document.getElementById(
-                        "confirmPassword"
-                    ).value;
+                    document.getElementById("confirmPassword").value;
 
 
-                /*
-                 * Check password
-                 */
-
-                if (
-                    password !==
-                    confirmPassword
-                ) {
+                // Check passwords
+                if (password !== confirmPassword) {
 
                     message.textContent =
                         "Passwords do not match.";
 
-                    message.style.color =
-                        "red";
+                    message.style.color = "red";
 
                     return;
                 }
@@ -254,49 +477,31 @@
                 message.textContent =
                     "Creating account...";
 
-                message.style.color =
-                    "#555";
+                message.style.color = "#555";
 
                 registerBtn.disabled = true;
 
 
                 try {
 
-                    const response =
-                        await fetch(
-                            "/api/auth/register",
-                            {
-                                method: "POST",
+                    const response = await fetch(
+                        "/api/auth/register",
+                        {
+                            method: "POST",
 
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
 
-                                body: JSON.stringify({
-
-                                    name: name,
-
-                                    email: email,
-
-                                    password: password,
-
-                                    roll_no: roll_no,
-
-                                    mobile: mobile,
-
-                                    department:
-                                        department,
-
-                                    year: year
-
-                                })
-                            }
-                        );
+                            body: JSON.stringify({
+                                ...details,
+                                password: password
+                            })
+                        }
+                    );
 
 
-                    const data =
-                        await response.json();
+                    const data = await response.json();
 
 
                     if (!response.ok) {
@@ -308,32 +513,19 @@
                     }
 
 
-                    message.textContent =
-                        data.message ||
-                        "Registration successful.";
+                    // Ensure backend sent the reference
+                    if (!data.application_ref) {
 
-                    message.style.color =
-                        "green";
-
-
-                    /*
-                     * Registration successful.
-                     * User must wait for
-                     * admin approval.
-                     */
-
-                    registerBtn.disabled =
-                        true;
+                        throw new Error(
+                            "Registration succeeded, but application reference was not received. Please contact the administrator."
+                        );
+                    }
 
 
-                    setTimeout(
-                        function() {
-
-                            window.location.href =
-                                "index.html";
-
-                        },
-                        2000
+                    // Display receipt
+                    showReceipt(
+                        details,
+                        data.application_ref
                     );
 
 
@@ -348,16 +540,12 @@
                         error.message ||
                         "Something went wrong.";
 
-                    message.style.color =
-                        "red";
+                    message.style.color = "red";
 
-                    registerBtn.disabled =
-                        false;
+                    registerBtn.disabled = false;
                 }
-
             }
         );
-
     </script>
 
 </body>

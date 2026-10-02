@@ -1,18 +1,731 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>VoteRight - Results</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-<div id="toast" class="toast"></div>
+    <header class="topbar">
 
-<script src="js/app.js"></script>
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight</span>
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="elections.html">
+                Elections
+            </a>
+
+            <a href="my-votes.html">
+                My Votes
+            </a>
+
+            <a href="results.html" class="active">
+                Results
+            </a>
+
+            <button
+                type="button"
+                onclick="logout()"
+                class="logout-btn"
+            >
+                Logout
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+
+            <div>
+
+                <p class="small-text">
+                    VoteRight Online Voting
+                </p>
+
+                <h1>
+                    Election Results
+                </h1>
+
+                <p>
+                    View the current vote count for each election.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ELECTION SELECTOR
+        ========================== -->
+
+        <section class="dashboard-card">
+
+            <div class="section-heading">
+
+                <h2>
+                    Select Election
+                </h2>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="electionSelect">
+                    Election
+                </label>
+
+                <select id="electionSelect">
+
+                    <option value="">
+                        Select an election
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+        </section>
+
+
+        <!-- =========================
+             RESULTS
+        ========================== -->
+
+        <section
+            id="resultsSection"
+            class="dashboard-card"
+            style="display:none;"
+        >
+
+            <div class="section-heading">
+
+                <h2 id="resultTitle">
+                    Results
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="loadResults()"
+                >
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <div
+                id="resultsContainer"
+                class="quick-actions"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        /* =========================================
+           AUTH
+        ========================================= */
+
+        const token =
+            localStorage.getItem(
+                "vr_token"
+            );
+
+        const savedUser =
+            localStorage.getItem(
+                "vr_user"
+            );
+
+
+        if (!token || !savedUser) {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        let currentUser = null;
+
+
+        try {
+
+            currentUser =
+                JSON.parse(
+                    savedUser
+                );
+
+
+            if (
+                currentUser.role !== "voter"
+            ) {
+
+                window.location.href =
+                    "index.html";
+
+            }
+
+        } catch (error) {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        function logout() {
+
+            localStorage.removeItem(
+                "vr_token"
+            );
+
+            localStorage.removeItem(
+                "vr_user"
+            );
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        /* =========================================
+           ELEMENTS
+        ========================================= */
+
+        const electionSelect =
+            document.getElementById(
+                "electionSelect"
+            );
+
+        const resultsSection =
+            document.getElementById(
+                "resultsSection"
+            );
+
+        const resultsContainer =
+            document.getElementById(
+                "resultsContainer"
+            );
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        /* =========================================
+           LOAD ELECTIONS
+        ========================================= */
+
+        async function loadElections() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/elections/"
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load elections."
+                    );
+
+                }
+
+
+                const elections =
+                    data.elections || [];
+
+
+                electionSelect.innerHTML = `
+
+                    <option value="">
+                        Select an election
+                    </option>
+
+                `;
+
+
+                elections.forEach(
+                    function(election) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            election.id;
+
+
+                        option.textContent =
+                            election.name;
+
+
+                        electionSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+
+                /*
+                 * Check URL:
+                 *
+                 * results.html?id=1
+                 */
+
+                const params =
+                    new URLSearchParams(
+                        window.location.search
+                    );
+
+
+                const electionId =
+                    params.get(
+                        "id"
+                    );
+
+
+                if (electionId) {
+
+                    electionSelect.value =
+                        electionId;
+
+
+                    loadResults();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Election loading error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message,
+                    "red"
+                );
+
+            }
+
+        }
+
+
+        /* =========================================
+           ELECTION CHANGE
+        ========================================= */
+
+        electionSelect.addEventListener(
+            "change",
+            function() {
+
+                const electionId =
+                    electionSelect.value;
+
+
+                if (!electionId) {
+
+                    resultsSection.style.display =
+                        "none";
+
+                    return;
+
+                }
+
+
+                window.history.replaceState(
+                    null,
+                    "",
+                    `results.html?id=${electionId}`
+                );
+
+
+                loadResults();
+
+            }
+        );
+
+
+        /* =========================================
+           LOAD RESULTS
+        ========================================= */
+
+        async function loadResults() {
+
+            const electionId =
+                electionSelect.value;
+
+
+            if (!electionId) {
+
+                showMessage(
+                    "Please select an election.",
+                    "red"
+                );
+
+                return;
+
+            }
+
+
+            resultsSection.style.display =
+                "block";
+
+
+            resultsContainer.innerHTML =
+                "Loading results...";
+
+
+            clearMessage();
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/elections/${electionId}/results`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Could not load results."
+                    );
+
+                }
+
+
+                const results =
+                    data.results || [];
+
+
+                resultsContainer.innerHTML =
+                    "";
+
+
+                if (
+                    results.length === 0
+                ) {
+
+                    resultsContainer.innerHTML = `
+
+                        <div class="action-card">
+
+                            <div class="action-icon">
+                                📊
+                            </div>
+
+                            <h3>
+                                No Results Available
+                            </h3>
+
+                            <p>
+                                No candidates have been
+                                added to this election yet.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                /*
+                 * Sort by vote count.
+                 *
+                 * The backend already returns
+                 * the results in this order,
+                 * but we sort again for safety.
+                 */
+
+                results.sort(
+                    function(a, b) {
+
+                        return (
+                            Number(
+                                b.vote_count || 0
+                            ) -
+                            Number(
+                                a.vote_count || 0
+                            )
+                        );
+
+                    }
+                );
+
+
+                const totalVotes =
+                    results.reduce(
+                        function(total, candidate) {
+
+                            return (
+                                total +
+                                Number(
+                                    candidate.vote_count || 0
+                                )
+                            );
+
+                        },
+                        0
+                    );
+
+
+                results.forEach(
+                    function(candidate, index) {
+
+                        const votes =
+                            Number(
+                                candidate.vote_count || 0
+                            );
+
+
+                        const percentage =
+                            totalVotes > 0
+                                ? (
+                                    votes /
+                                    totalVotes
+                                ) * 100
+                                : 0;
+
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        card.className =
+                            "action-card";
+
+
+                        card.innerHTML = `
+
+                            <div class="action-icon">
+                                ${index === 0
+                                    ? "🏆"
+                                    : "👤"}
+                            </div>
+
+                            <h3>
+                                ${escapeHTML(
+                                    candidate.name
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHTML(
+                                    candidate.year_position ||
+                                    "Candidate"
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Votes:
+                                </strong>
+
+                                ${votes}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Percentage:
+                                </strong>
+
+                                ${percentage.toFixed(1)}%
+                            </p>
+
+                            <div
+                                style="
+                                    width:100%;
+                                    height:10px;
+                                    background:#e9ecef;
+                                    border-radius:10px;
+                                    overflow:hidden;
+                                    margin-top:12px;
+                                "
+                            >
+
+                                <div
+                                    style="
+                                        width:${percentage}%;
+                                        height:100%;
+                                        background:currentColor;
+                                        border-radius:10px;
+                                    "
+                                ></div>
+
+                            </div>
+
+                        `;
+
+
+                        resultsContainer.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+
+                showMessage(
+                    `Total votes recorded: ${totalVotes}`,
+                    "green"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Results error:",
+                    error
+                );
+
+
+                resultsContainer.innerHTML =
+                    "";
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to load results.",
+                    "red"
+                );
+
+            }
+
+        }
+
+
+        /* =========================================
+           MESSAGE
+        ========================================= */
+
+        function showMessage(
+            text,
+            color
+        ) {
+
+            message.textContent =
+                text;
+
+            message.style.color =
+                color;
+
+        }
+
+
+        function clearMessage() {
+
+            message.textContent =
+                "";
+
+        }
+
+
+        /* =========================================
+           HTML ESCAPING
+        ========================================= */
+
+        function escapeHTML(
+            value
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                value;
+
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =========================================
+           START
+        ========================================= */
+
+        loadElections();
+
+    </script>
+
 </body>
+
 </html>
