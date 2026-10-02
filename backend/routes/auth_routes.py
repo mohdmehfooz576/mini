@@ -1,3 +1,4 @@
+
 from flask import Blueprint, request, jsonify
 
 from werkzeug.security import (
@@ -24,6 +25,10 @@ auth_routes = Blueprint(
     url_prefix="/api/auth"
 )
 
+
+# =========================
+# VOTER REGISTRATION
+# =========================
 
 @auth_routes.route(
     "/register",
@@ -61,7 +66,7 @@ def register():
         data.get("year", "")
     ).strip()
 
-    # Required fields
+    # Check required fields
     if not name or not email or not password:
 
         return jsonify({
@@ -84,6 +89,7 @@ def register():
             "message": "Email already registered"
         }), 409
 
+    # Hash password
     hashed_password = generate_password_hash(
         password
     )
@@ -121,6 +127,10 @@ def register():
                 "message": "Could not create voter profile"
             }), 500
 
+        # Generate permanent application reference
+        # based on the database voter ID
+        application_ref = f"VR-{int(voter_id):06d}"
+
         return jsonify({
             "success": True,
             "message": (
@@ -128,7 +138,8 @@ def register():
                 "Wait for admin approval."
             ),
             "user_id": user_id,
-            "voter_id": voter_id
+            "voter_id": voter_id,
+            "application_ref": application_ref
         }), 201
 
     except Exception as error:
@@ -143,6 +154,10 @@ def register():
             "message": "Registration failed"
         }), 500
 
+
+# =========================
+# VOTER / ADMIN LOGIN
+# =========================
 
 @auth_routes.route(
     "/login",
@@ -167,6 +182,7 @@ def login():
             "message": "Email and password are required"
         }), 400
 
+    # Find user
     user = get_user_by_email(email)
 
     if not user:
@@ -176,6 +192,7 @@ def login():
             "message": "Invalid email or password"
         }), 401
 
+    # Verify password
     if not check_password_hash(
         user["password"],
         password
@@ -186,7 +203,7 @@ def login():
             "message": "Invalid email or password"
         }), 401
 
-    # Voter approval check
+    # Check voter approval
     if user["role"] == "voter":
 
         voter = get_voter_by_user_id(
@@ -239,3 +256,4 @@ def login():
         }
 
     }), 200
+
