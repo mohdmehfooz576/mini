@@ -27,7 +27,7 @@ from routes.election_routes import election_routes
 from routes.candidate_routes import candidate_routes
 from routes.vote_routes import vote_routes
 from routes.admin_routes import admin_routes
-
+from routes.notice_routes import notice_routes
 
 # ==========================================
 # PROJECT ROOT DIRECTORY
@@ -79,6 +79,9 @@ app.register_blueprint(
 
 app.register_blueprint(
     admin_routes
+)
+app.register_blueprint(
+    notice_routes
 )
 
 
@@ -165,7 +168,7 @@ def home():
 
     return send_from_directory(
         BASE_DIR,
-        "index.html"
+        "home.html"
     )
 
 

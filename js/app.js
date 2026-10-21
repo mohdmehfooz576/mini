@@ -428,46 +428,22 @@ function escapeHTML(
    FORMAT DATE
 ========================================================= */
 
-function formatDate(
-    dateValue
-) {
-
+function formatDate(dateValue) {
     if (!dateValue) {
-
         return "-";
-
     }
 
+    const date = new Date(dateValue);
 
-    const date =
-        new Date(
-            dateValue
-        );
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return String(
-            dateValue
-        );
-
+    if (Number.isNaN(date.getTime())) {
+        return String(dateValue);
     }
 
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }
-    );
-
+    return date.toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short"
+    });
 }
-
 
 /* =========================================================
    TOAST MESSAGE

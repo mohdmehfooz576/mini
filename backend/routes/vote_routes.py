@@ -162,6 +162,10 @@ def cast_vote():
 # GET MY VOTES
 # ==========================================
 
+# ==========================================
+# GET MY VOTES
+# ==========================================
+
 @vote_routes.route(
     "/my-votes",
     methods=["GET"]
@@ -174,7 +178,6 @@ def my_votes():
     )
 
     if not voter:
-
         return jsonify({
             "success": False,
             "message": "Voter profile not found"
@@ -183,6 +186,16 @@ def my_votes():
     votes = get_votes_by_voter(
         voter["id"]
     )
+
+    # Serialize MySQL DATETIME explicitly.
+    # Preserve the database's displayed wall-clock time.
+    for vote in votes:
+        voted_at = vote.get("voted_at")
+
+        if voted_at is not None:
+            vote["voted_at"] = voted_at.strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
 
     return jsonify({
         "success": True,

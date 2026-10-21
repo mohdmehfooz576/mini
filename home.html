@@ -1,0 +1,2917 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>VoteRight | Smart & Secure Voting</title>
+
+
+    <style>
+
+        :root {
+
+            --black: #080808;
+            --black-soft: #111111;
+            --black-card: #151515;
+
+            --gold: #d4af37;
+            --gold-light: #f4d675;
+            --gold-bright: #ffd84d;
+            --gold-dark: #a47c16;
+
+            --white: #ffffff;
+            --text: #f8f5ed;
+            --muted: #aaa59a;
+
+            --border:
+                rgba(212, 175, 55, 0.20);
+
+            --shadow:
+                0 25px 70px rgba(0, 0, 0, .55);
+
+            --gold-shadow:
+                0 15px 45px
+                rgba(212, 175, 55, .15);
+        }
+
+
+        /* =========================
+           GLOBAL
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            font-family:
+                Inter,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: var(--text);
+
+            background:
+
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(212,175,55,.07),
+                    transparent 28%
+                ),
+
+                radial-gradient(
+                    circle at 85% 25%,
+                    rgba(212,175,55,.05),
+                    transparent 30%
+                ),
+
+                var(--black);
+
+            line-height: 1.6;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        button {
+            font: inherit;
+            cursor: pointer;
+        }
+
+
+        .container {
+
+            width:
+                min(1160px, 92%);
+
+            margin: auto;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+
+            background:
+                rgba(8,8,8,.92);
+
+            backdrop-filter:
+                blur(18px);
+
+            border-bottom:
+                1px solid
+                rgba(212,175,55,.15);
+        }
+
+
+        .nav-inner {
+
+            min-height: 78px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        /* BRAND */
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            font-size: 23px;
+
+            font-weight: 850;
+
+            letter-spacing: -.6px;
+        }
+
+
+        .brand-icon {
+
+            width: 44px;
+            height: 44px;
+
+            border-radius: 13px;
+
+            display: grid;
+            place-items: center;
+
+            color: #090909;
+
+            font-size: 25px;
+
+            font-weight: 900;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #fff0a6,
+                    #d4af37 48%,
+                    #9e7411
+                );
+
+            box-shadow:
+                0 7px 25px
+                rgba(212,175,55,.25);
+        }
+
+
+        .brand span:last-child {
+            color: #f8f5ed;
+        }
+
+
+        .brand span:last-child::first-letter {
+            color: var(--gold);
+        }
+
+
+        /* NAV LINKS */
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 31px;
+
+            color: #bcb7ad;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        .nav-links a {
+
+            position: relative;
+
+            transition: .25s ease;
+        }
+
+
+        .nav-links a::after {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            bottom: -7px;
+
+            width: 0;
+            height: 2px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    var(--gold),
+                    var(--gold-light)
+                );
+
+            transition: .25s ease;
+        }
+
+
+        .nav-links a:hover {
+            color: var(--gold-light);
+        }
+
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+
+        /* NAV BUTTONS */
+
+        .nav-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            align-items: center;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .btn {
+
+            display: inline-flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            border:
+                1px solid transparent;
+
+            border-radius: 11px;
+
+            padding:
+                11px 20px;
+
+            font-weight: 750;
+
+            font-size: 14px;
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                background .25s ease;
+        }
+
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+
+        /* OUTLINE */
+
+        .btn-outline {
+
+            color:
+                var(--gold-light);
+
+            background:
+                rgba(212,175,55,.04);
+
+            border-color:
+                rgba(212,175,55,.35);
+        }
+
+
+        .btn-outline:hover {
+
+            background:
+                rgba(212,175,55,.10);
+
+            border-color:
+                var(--gold);
+        }
+
+
+        /* PRIMARY */
+
+        .btn-primary {
+
+            color: #0a0a0a;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #f8dd78,
+                    #d4af37,
+                    #a77c17
+                );
+
+            box-shadow:
+                0 10px 28px
+                rgba(212,175,55,.20);
+        }
+
+
+        .btn-primary:hover {
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #ffe898,
+                    #e1bd45,
+                    #b7891d
+                );
+
+            box-shadow:
+                0 14px 35px
+                rgba(212,175,55,.28);
+        }
+
+
+        /* MENU */
+
+        .menu-toggle {
+
+            display: none;
+
+            background:
+                rgba(212,175,55,.08);
+
+            border:
+                1px solid
+                rgba(212,175,55,.25);
+
+            color:
+                var(--gold-light);
+
+            border-radius: 10px;
+
+            padding:
+                8px 12px;
+
+            font-size: 21px;
+        }
+
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding:
+                95px 0 95px;
+
+            background:
+
+                radial-gradient(
+                    circle at 75% 10%,
+                    rgba(212,175,55,.11),
+                    transparent 27%
+                ),
+
+                radial-gradient(
+                    circle at 10% 80%,
+                    rgba(212,175,55,.055),
+                    transparent 30%
+                ),
+
+                linear-gradient(
+                    180deg,
+                    #090909,
+                    #0b0b0b
+                );
+        }
+
+
+        .hero::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 50%;
+
+            transform:
+                translateX(-50%);
+
+            width: 55%;
+
+            height: 1px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(212,175,55,.7),
+                    transparent
+                );
+        }
+
+
+        .hero-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            align-items: center;
+
+            gap: 70px;
+        }
+
+
+        /* HERO LEFT */
+
+        .eyebrow {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            background:
+                rgba(212,175,55,.08);
+
+            color:
+                var(--gold-light);
+
+            border:
+                1px solid
+                rgba(212,175,55,.22);
+
+            border-radius: 30px;
+
+            padding:
+                8px 14px;
+
+            font-weight: 800;
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+
+        .eyebrow-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background:
+                var(--gold);
+
+            box-shadow:
+                0 0 12px var(--gold);
+        }
+
+
+        .hero h1 {
+
+            margin:
+                23px 0 19px;
+
+            font-size:
+                clamp(40px, 5.3vw, 67px);
+
+            line-height: 1.04;
+
+            letter-spacing:
+                -2.8px;
+
+            font-weight: 900;
+        }
+
+
+        .hero h1 span {
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    #fff1a6,
+                    #d4af37,
+                    #a77a13
+                );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
+        }
+
+
+        .hero-copy {
+
+            color:
+                var(--muted);
+
+            font-size: 17px;
+
+            max-width: 540px;
+
+            margin-bottom: 29px;
+        }
+
+
+        .hero-buttons {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+        }
+
+
+        .hero-note {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-top: 24px;
+
+            color:
+                #89857b;
+
+            font-size: 13px;
+        }
+
+
+        .hero-note span {
+
+            color:
+                var(--gold);
+
+            font-weight: 900;
+        }
+
+
+        /* =========================
+           PREMIUM PHOTO AREA
+        ========================= */
+
+        .visual {
+
+            position: relative;
+
+            min-height: 510px;
+
+            display: grid;
+
+            place-items: center;
+        }
+
+
+        .visual::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 390px;
+            height: 390px;
+
+            border-radius: 50%;
+
+            background:
+
+                radial-gradient(
+                    circle,
+                    rgba(212,175,55,.18),
+                    rgba(212,175,55,.04) 48%,
+                    transparent 70%
+                );
+
+            filter: blur(5px);
+        }
+
+
+        /* PHOTO FRAME */
+
+        .photo-frame {
+
+            position: relative;
+
+            z-index: 2;
+
+            width:
+                min(470px, 95%);
+
+            height: 470px;
+
+            padding: 8px;
+
+            border-radius: 28px;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #fff0a0,
+                    #d4af37 30%,
+                    #8e6812 60%,
+                    #e5c75b
+                );
+
+            box-shadow:
+
+                0 35px 80px
+                rgba(0,0,0,.75),
+
+                0 0 55px
+                rgba(212,175,55,.13);
+
+            transform:
+                rotate(1.5deg);
+
+            transition:
+                transform .4s ease,
+                box-shadow .4s ease;
+        }
+
+
+        .photo-frame:hover {
+
+            transform:
+                rotate(0deg)
+                translateY(-7px);
+
+            box-shadow:
+
+                0 45px 100px
+                rgba(0,0,0,.8),
+
+                0 0 70px
+                rgba(212,175,55,.20);
+        }
+
+
+        /* PHOTO */
+
+        .hero-photo {
+
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+
+            border-radius: 21px;
+
+            filter:
+                saturate(.9)
+                contrast(1.03);
+        }
+
+
+        /* PHOTO DARK GRADIENT */
+
+        .photo-overlay {
+
+            position: absolute;
+
+            inset: 8px;
+
+            border-radius: 21px;
+
+            background:
+
+                linear-gradient(
+                    180deg,
+                    transparent 45%,
+                    rgba(0,0,0,.80) 100%
+                );
+        }
+
+
+        /* PHOTO TEXT */
+
+        .photo-caption {
+
+            position: absolute;
+
+            z-index: 3;
+
+            left: 31px;
+            right: 31px;
+            bottom: 27px;
+        }
+
+
+        .photo-caption small {
+
+            display: block;
+
+            color:
+                var(--gold-light);
+
+            text-transform:
+                uppercase;
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            letter-spacing: 1.5px;
+
+            margin-bottom: 4px;
+        }
+
+
+        .photo-caption strong {
+
+            display: block;
+
+            color: white;
+
+            font-size: 22px;
+
+            line-height: 1.15;
+        }
+
+
+        /* PHOTO GOLD BADGE */
+
+        .photo-badge {
+
+            position: absolute;
+
+            z-index: 5;
+
+            top: 24px;
+
+            right: -23px;
+
+            padding:
+                12px 16px;
+
+            border-radius: 12px;
+
+            color:
+                #090909;
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #ffe998,
+                    #d4af37
+                );
+
+            box-shadow:
+                0 14px 35px
+                rgba(0,0,0,.5);
+        }
+
+
+        /* FLOAT CARD */
+
+        .float-card {
+
+            position: absolute;
+
+            z-index: 6;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            background:
+                rgba(20,20,20,.92);
+
+            backdrop-filter:
+                blur(14px);
+
+            border:
+                1px solid
+                rgba(212,175,55,.27);
+
+            border-radius: 14px;
+
+            padding:
+                12px 15px;
+
+            box-shadow:
+                0 20px 40px
+                rgba(0,0,0,.55);
+
+            font-size: 11px;
+
+            font-weight: 800;
+        }
+
+
+        .float-card.one {
+
+            left: -25px;
+
+            bottom: 48px;
+
+            color:
+                #eee9dc;
+        }
+
+
+        .float-card.two {
+
+            right: -20px;
+
+            bottom: 112px;
+
+            color:
+                var(--gold-light);
+        }
+
+
+        .float-icon {
+
+            width: 31px;
+            height: 31px;
+
+            border-radius: 9px;
+
+            display: grid;
+
+            place-items: center;
+
+            color:
+                #090909;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #f5da76,
+                    #b88a1d
+                );
+
+            font-weight: 900;
+        }
+
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats-wrap {
+
+            position: relative;
+
+            z-index: 10;
+
+            margin-top: -1px;
+        }
+
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #0f0f0f
+                );
+
+            border:
+                1px solid
+                rgba(212,175,55,.17);
+
+            border-radius: 19px;
+
+            box-shadow:
+                var(--shadow);
+
+            padding:
+                25px 10px;
+        }
+
+
+        .stat {
+
+            text-align: center;
+
+            padding:
+                5px 15px;
+        }
+
+
+        .stat + .stat {
+
+            border-left:
+                1px solid
+                rgba(212,175,55,.12);
+        }
+
+
+        .stat strong {
+
+            display: block;
+
+            font-size: 18px;
+
+            color:
+                var(--gold-light);
+        }
+
+
+        .stat span {
+
+            color:
+                #8f8b83;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           GENERAL SECTIONS
+        ========================= */
+
+        .section {
+
+            padding:
+                95px 0;
+        }
+
+
+        .section-heading {
+
+            text-align: center;
+
+            max-width: 680px;
+
+            margin:
+                0 auto 42px;
+        }
+
+
+        .section-tag {
+
+            color:
+                var(--gold);
+
+            font-size: 11px;
+
+            text-transform:
+                uppercase;
+
+            font-weight: 900;
+
+            letter-spacing: 1.5px;
+        }
+
+
+        .section-heading h2 {
+
+            font-size:
+                clamp(29px, 4vw, 41px);
+
+            letter-spacing:
+                -1.4px;
+
+            margin:
+                8px 0 11px;
+
+            color:
+                #f7f3e8;
+        }
+
+
+        .section-heading p {
+
+            color:
+                #8f8b83;
+
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           HOW IT WORKS
+        ========================= */
+
+        .steps {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .step {
+
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    #171717,
+                    #101010
+                );
+
+            border:
+                1px solid
+                rgba(212,175,55,.14);
+
+            border-radius: 19px;
+
+            padding:
+                28px;
+
+            box-shadow:
+                0 15px 40px
+                rgba(0,0,0,.35);
+
+            transition:
+                transform .3s ease,
+                border-color .3s ease,
+                box-shadow .3s ease;
+        }
+
+
+        .step::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 2px;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--gold),
+                    transparent
+                );
+
+            opacity: .5;
+        }
+
+
+        .step:hover {
+
+            transform:
+                translateY(-7px);
+
+            border-color:
+                rgba(212,175,55,.35);
+
+            box-shadow:
+                0 25px 55px
+                rgba(0,0,0,.5);
+        }
+
+
+        .step-number {
+
+            width: 49px;
+            height: 49px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 14px;
+
+            background:
+                rgba(212,175,55,.09);
+
+            border:
+                1px solid
+                rgba(212,175,55,.2);
+
+            color:
+                var(--gold-light);
+
+            font-size: 18px;
+
+            font-weight: 900;
+
+            margin-bottom: 19px;
+        }
+
+
+        .step h3 {
+
+            font-size: 17px;
+
+            margin-bottom: 8px;
+
+            color:
+                #f6f2e8;
+        }
+
+
+        .step p {
+
+            color:
+                #8e8a81;
+
+            font-size: 14px;
+        }
+
+
+        .step-link {
+
+            display: inline-block;
+
+            margin-top: 15px;
+
+            color:
+                var(--gold);
+
+            font-weight: 800;
+
+            font-size: 13px;
+        }
+
+
+        .step-link:hover {
+
+            color:
+                var(--gold-light);
+        }
+
+
+        /* =========================
+           NOTICES
+        ========================= */
+
+        .notice-section {
+
+            background:
+
+                linear-gradient(
+                    180deg,
+                    #0d0d0d,
+                    #11100d
+                );
+
+            border-top:
+                1px solid
+                rgba(212,175,55,.08);
+
+            border-bottom:
+                1px solid
+                rgba(212,175,55,.08);
+        }
+
+
+        .notice-list {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .notice {
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    #181818,
+                    #111111
+                );
+
+            border:
+                1px solid
+                rgba(212,175,55,.13);
+
+            border-radius: 17px;
+
+            padding: 23px;
+
+            transition:
+                .3s ease;
+        }
+
+
+        .notice:hover {
+
+            transform:
+                translateY(-5px);
+
+            border-color:
+                rgba(212,175,55,.30);
+
+            box-shadow:
+                0 18px 40px
+                rgba(0,0,0,.35);
+        }
+
+
+        .notice-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin-bottom: 13px;
+        }
+
+
+        .notice-label {
+
+            color:
+                #0b0b0b;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #f4d879,
+                    #b98b1e
+                );
+
+            padding:
+                5px 9px;
+
+            border-radius: 7px;
+
+            font-size: 9px;
+
+            font-weight: 900;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        .notice-date {
+
+            color:
+                #77736b;
+
+            font-size: 11px;
+
+            white-space:
+                nowrap;
+        }
+
+
+        .notice h3 {
+
+            font-size: 16px;
+
+            margin-bottom: 7px;
+
+            color:
+                #f4f0e7;
+        }
+
+
+        .notice p {
+
+            color:
+                #8e8a81;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           DYNAMIC NOTICE STATES
+        ========================= */
+
+        .notice-loading,
+        .notice-empty,
+        .notice-error {
+
+            grid-column:
+                1 / -1;
+
+            text-align:
+                center;
+
+            padding:
+                45px 20px;
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    #181818,
+                    #111111
+                );
+
+            border:
+                1px solid
+                rgba(212,175,55,.14);
+
+            border-radius: 17px;
+
+            color:
+                #8e8a81;
+
+            font-size: 14px;
+        }
+
+
+        .notice-loading {
+
+            color:
+                var(--gold-light);
+        }
+
+
+        .notice-loading::before {
+
+            content: "";
+
+            display: inline-block;
+
+            width: 13px;
+            height: 13px;
+
+            margin-right: 9px;
+
+            border:
+                2px solid
+                rgba(212,175,55,.25);
+
+            border-top-color:
+                var(--gold);
+
+            border-radius: 50%;
+
+            vertical-align:
+                -2px;
+
+            animation:
+                noticeSpin .8s linear infinite;
+        }
+
+
+        @keyframes noticeSpin {
+
+            to {
+                transform:
+                    rotate(360deg);
+            }
+
+        }
+
+
+        .notice-empty {
+
+            color:
+                #aaa59a;
+        }
+
+
+        .notice-error {
+
+            color:
+                #d9a94a;
+        }
+
+
+        /* =========================
+           CTA
+        ========================= */
+
+        .cta {
+
+            padding:
+                85px 0;
+        }
+
+
+        .cta-panel {
+
+            position: relative;
+
+            overflow: hidden;
+
+            text-align: center;
+
+            padding:
+                65px 20px;
+
+            border-radius: 26px;
+
+            color: white;
+
+            background:
+
+                radial-gradient(
+                    circle at 20% 30%,
+                    rgba(255,235,145,.13),
+                    transparent 25%
+                ),
+
+                radial-gradient(
+                    circle at 80% 80%,
+                    rgba(255,255,255,.06),
+                    transparent 30%
+                ),
+
+                linear-gradient(
+                    120deg,
+                    #17130a,
+                    #2a220e,
+                    #17130a
+                );
+
+            border:
+                1px solid
+                rgba(212,175,55,.30);
+
+            box-shadow:
+                0 25px 65px
+                rgba(0,0,0,.55);
+        }
+
+
+        .cta-panel::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            border-radius: 50%;
+
+            top: -180px;
+            left: -70px;
+
+            border:
+                1px solid
+                rgba(212,175,55,.15);
+        }
+
+
+        .cta-panel::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            border-radius: 50%;
+
+            right: -100px;
+            bottom: -190px;
+
+            border:
+                1px solid
+                rgba(212,175,55,.15);
+        }
+
+
+        .cta-panel h2 {
+
+            position: relative;
+
+            font-size:
+                clamp(28px, 4vw, 40px);
+
+            margin-bottom: 9px;
+
+            color:
+                #fff6d7;
+        }
+
+
+        .cta-panel p {
+
+            position: relative;
+
+            color:
+                #aaa38f;
+
+            margin-bottom: 25px;
+        }
+
+
+        .cta-panel .btn {
+
+            position: relative;
+
+            color:
+                #0b0b0b;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #fff0a1,
+                    #d4af37,
+                    #a87d18
+                );
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            background:
+                #070707;
+
+            border-top:
+                1px solid
+                rgba(212,175,55,.13);
+
+            padding:
+                28px 0;
+        }
+
+
+        .footer-inner {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            color:
+                #77736b;
+
+            font-size: 12px;
+        }
+
+
+        .footer-brand {
+
+            color:
+                var(--gold-light);
+
+            font-weight: 850;
+
+            font-size: 15px;
+        }
+
+
+        .footer-inner a {
+
+            color:
+                #9a9488;
+
+            transition: .2s;
+        }
+
+
+        .footer-inner a:hover {
+
+            color:
+                var(--gold);
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+
+            .hero-grid {
+                gap: 35px;
+            }
+
+
+            .photo-frame {
+
+                width:
+                    min(420px, 95%);
+
+                height: 430px;
+            }
+
+
+            .float-card.one {
+                left: -10px;
+            }
+
+
+            .float-card.two {
+                right: -10px;
+            }
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .nav-links {
+                gap: 17px;
+            }
+
+
+            .hero {
+                padding-top: 65px;
+            }
+
+
+            .hero-grid {
+                gap: 20px;
+            }
+
+
+            .visual {
+                min-height: 450px;
+            }
+
+
+            .photo-frame {
+                height: 410px;
+            }
+
+
+            .notice-list {
+
+                grid-template-columns:
+                    1fr 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .nav-inner {
+
+                min-height: 68px;
+
+                flex-wrap: wrap;
+            }
+
+
+            .brand {
+                font-size: 20px;
+            }
+
+
+            .brand-icon {
+
+                width: 38px;
+                height: 38px;
+            }
+
+
+            .menu-toggle {
+
+                display: block;
+
+                margin-left: auto;
+            }
+
+
+            .nav-links {
+
+                display: none;
+
+                order: 3;
+
+                width: 100%;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 0;
+
+                padding:
+                    8px 0 15px;
+            }
+
+
+            .nav-links.open {
+                display: flex;
+            }
+
+
+            .nav-links a {
+
+                padding:
+                    10px 4px;
+            }
+
+
+            .nav-actions {
+                order: 2;
+            }
+
+
+            .nav-actions .btn {
+
+                padding:
+                    9px 11px;
+
+                font-size: 12px;
+            }
+
+
+            /* HERO */
+
+            .hero {
+
+                padding:
+                    52px 0 50px;
+            }
+
+
+            .hero-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .hero h1 {
+
+                letter-spacing:
+                    -1.7px;
+            }
+
+
+            .hero-copy {
+
+                font-size:
+                    15px;
+            }
+
+
+            /* PHOTO */
+
+            .visual {
+
+                min-height:
+                    430px;
+
+                margin-top:
+                    15px;
+            }
+
+
+            .photo-frame {
+
+                width:
+                    min(390px, 92%);
+
+                height:
+                    400px;
+
+                transform:
+                    rotate(0);
+            }
+
+
+            .photo-badge {
+
+                right:
+                    0;
+            }
+
+
+            .float-card.one {
+
+                left:
+                    0;
+
+                bottom:
+                    25px;
+            }
+
+
+            .float-card.two {
+
+                right:
+                    0;
+
+                bottom:
+                    95px;
+            }
+
+
+            /* STATS */
+
+            .stats {
+
+                padding:
+                    17px 3px;
+            }
+
+
+            .stat {
+
+                padding:
+                    4px 6px;
+            }
+
+
+            .stat strong {
+
+                font-size:
+                    14px;
+            }
+
+
+            .stat span {
+
+                font-size:
+                    10px;
+            }
+
+
+            /* SECTIONS */
+
+            .section {
+
+                padding:
+                    65px 0;
+            }
+
+
+            .steps,
+            .notice-list {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .section-heading {
+
+                margin-bottom:
+                    28px;
+            }
+
+
+            /* CTA */
+
+            .cta {
+
+                padding:
+                    55px 0;
+            }
+
+
+            /* FOOTER */
+
+            .footer-inner {
+
+                flex-direction:
+                    column;
+
+                text-align:
+                    center;
+            }
+
+        }
+
+
+        @media (max-width: 390px) {
+
+            .nav-actions {
+                gap: 5px;
+            }
+
+
+            .nav-actions .btn {
+                padding: 8px;
+            }
+
+
+            .hero-buttons .btn {
+                width: 100%;
+            }
+
+
+            .photo-frame {
+                height: 350px;
+            }
+
+
+            .float-card {
+                font-size: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
+
+    <header class="navbar">
+
+        <div class="container nav-inner">
+
+
+            <a
+                class="brand"
+                href="home.html"
+                aria-label="VoteRight home"
+            >
+
+                <span class="brand-icon">
+                    ✓
+                </span>
+
+                <span>
+                    VoteRight
+                </span>
+
+            </a>
+
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open navigation"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
+
+
+            <nav
+                class="nav-links"
+                id="navLinks"
+            >
+
+                <a href="#home">
+                    Home
+                </a>
+
+                <a href="#how-it-works">
+                    How It Works
+                </a>
+
+                <a href="#notices">
+                    Notices
+                </a>
+
+            </nav>
+
+
+            <div class="nav-actions">
+
+                <a
+                    class="btn btn-outline"
+                    href="index.html"
+                >
+                    Login
+                </a>
+
+                <a
+                    class="btn btn-primary"
+                    href="register.html"
+                >
+                    Register
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             HERO
+        ================================================= -->
+
+        <section
+            class="hero"
+            id="home"
+        >
+
+            <div class="container hero-grid">
+
+
+                <!-- HERO LEFT -->
+
+                <div>
+
+                    <div class="eyebrow">
+
+                        <span class="eyebrow-dot"></span>
+
+                        Smart Campus Elections
+
+                    </div>
+
+
+                    <h1>
+
+                        Your Voice.<br>
+
+                        Your Vote.<br>
+
+                        <span>
+                            Your Right.
+                        </span>
+
+                    </h1>
+
+
+                    <p class="hero-copy">
+
+                        Welcome to VoteRight — a simple,
+                        secure and modern way to participate
+                        in campus elections. Make your choice,
+                        cast your vote and be part of the change.
+
+                    </p>
+
+
+                    <div class="hero-buttons">
+
+                        <a
+                            class="btn btn-primary"
+                            href="index.html"
+                        >
+                            Get Started &nbsp; →
+                        </a>
+
+
+                        <a
+                            class="btn btn-outline"
+                            href="#how-it-works"
+                        >
+                            How It Works
+                        </a>
+
+                    </div>
+
+
+                    <div class="hero-note">
+
+                        <span>
+                            ✓
+                        </span>
+
+                        One voter. One vote.
+                        A stronger voice.
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PREMIUM PHOTO
+                ================================================= -->
+
+                <div
+                    class="visual"
+                    aria-label="Students participating in campus voting"
+                >
+
+                    <div class="photo-frame">
+
+                        <img
+                            class="hero-photo"
+                            src="https://img.etimg.com/thumb/width-1200%2Cheight-900%2Cimgsize-119256%2Cresizemode-75%2Cmsid-127306992/nri/visit/asu-offers-two-country-study-pathway-for-indian-students-at-its-london-campus.jpg"
+                            alt="Student participating in a campus election"
+                        >
+
+                        <div class="photo-overlay"></div>
+
+
+                        <div class="photo-caption">
+
+                            <small>
+                                VoteRight • Campus Elections
+                            </small>
+
+                            <strong>
+                                Every Voice<br>
+                                Deserves To Be Heard.
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOP BADGE -->
+
+                    <div class="photo-badge">
+                        ✓ VERIFIED VOTING
+                    </div>
+
+
+                    <!-- FLOAT CARD 1 -->
+
+                    <div class="float-card one">
+
+                        <div class="float-icon">
+                            ✓
+                        </div>
+
+                        <div>
+                            Secure<br>
+                            Voting
+                        </div>
+
+                    </div>
+
+
+                    <!-- FLOAT CARD 2 -->
+
+                    <div class="float-card two">
+
+                        <div class="float-icon">
+                            ★
+                        </div>
+
+                        <div>
+                            Your Voice<br>
+                            Matters
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             STATS
+        ================================================= -->
+
+        <div class="container stats-wrap">
+
+            <div class="stats">
+
+
+                <div class="stat">
+
+                    <strong>
+                        Simple
+                    </strong>
+
+                    <span>
+                        Easy voting experience
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+                        Secure
+                    </strong>
+
+                    <span>
+                        Protected access
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>
+                        Fair
+                    </strong>
+
+                    <span>
+                        One voter, one vote
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HOW IT WORKS
+        ================================================= -->
+
+        <section
+            class="section"
+            id="how-it-works"
+        >
+
+            <div class="container">
+
+
+                <div class="section-heading">
+
+                    <span class="section-tag">
+                        The Process
+                    </span>
+
+                    <h2>
+                        How VoteRight Works
+                    </h2>
+
+                    <p>
+                        Three simple steps to make your voice
+                        count in campus elections.
+                    </p>
+
+                </div>
+
+
+                <div class="steps">
+
+
+                    <!-- STEP 1 -->
+
+                    <article class="step">
+
+                        <div class="step-number">
+                            01
+                        </div>
+
+                        <h3>
+                            Login or Register
+                        </h3>
+
+                        <p>
+                            Open your account and sign in to
+                            access the elections available to you.
+                        </p>
+
+                        <a
+                            class="step-link"
+                            href="index.html"
+                        >
+                            Go to account →
+                        </a>
+
+                    </article>
+
+
+                    <!-- STEP 2 -->
+
+                    <article class="step">
+
+                        <div class="step-number">
+                            02
+                        </div>
+
+                        <h3>
+                            Choose Your Candidate
+                        </h3>
+
+                        <p>
+                            Review the candidates and select
+                            the person you want to support.
+                        </p>
+
+                        <a
+                            class="step-link"
+                            href="index.html"
+                        >
+                            Get started →
+                        </a>
+
+                    </article>
+
+
+                    <!-- STEP 3 -->
+
+                    <article class="step">
+
+                        <div class="step-number">
+                            03
+                        </div>
+
+                        <h3>
+                            Cast Your Vote
+                        </h3>
+
+                        <p>
+                            Submit your vote and participate
+                            in shaping your campus community.
+                        </p>
+
+                        <a
+                            class="step-link"
+                            href="index.html"
+                        >
+                            Vote now →
+                        </a>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DYNAMIC NOTICES
+        ================================================= -->
+
+        <section
+            class="section notice-section"
+            id="notices"
+        >
+
+            <div class="container">
+
+
+                <div class="section-heading">
+
+                    <span class="section-tag">
+                        Stay Informed
+                    </span>
+
+                    <h2>
+                        Latest Notices
+                    </h2>
+
+                    <p>
+                        Important information and announcements
+                        for voters.
+                    </p>
+
+                </div>
+
+
+                <!--
+                    IMPORTANT:
+
+                    Notices are NOT hard-coded here.
+
+                    JavaScript loads them from:
+
+                    GET /api/notices
+
+                    Only published notices returned
+                    by the backend will be displayed.
+                -->
+
+                <div
+                    class="notice-list"
+                    id="noticeList"
+                >
+
+                    <div class="notice-loading">
+                        Loading latest notices...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CTA
+        ================================================= -->
+
+        <section class="cta">
+
+            <div class="container">
+
+                <div class="cta-panel">
+
+                    <h2>
+                        Ready to Make Your Voice Count?
+                    </h2>
+
+                    <p>
+                        Sign in to explore elections and take
+                        part in the process.
+                    </p>
+
+                    <a
+                        class="btn"
+                        href="index.html"
+                    >
+                        Login / Register &nbsp; →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+
+    <footer>
+
+        <div class="container footer-inner">
+
+            <div class="footer-brand">
+                ✓ VoteRight
+            </div>
+
+            <div>
+
+                ©
+
+                <span id="year"></span>
+
+                VoteRight.
+
+                All rights reserved.
+
+            </div>
+
+            <a href="#home">
+                Back to top ↑
+            </a>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script>
+
+
+        /* =================================================
+           MOBILE NAVIGATION
+        ================================================= */
+
+        const menuToggle =
+            document.getElementById("menuToggle");
+
+
+        const navLinks =
+            document.getElementById("navLinks");
+
+
+        menuToggle.addEventListener(
+            "click",
+            function () {
+
+                const isOpen =
+                    navLinks.classList.toggle("open");
+
+
+                menuToggle.setAttribute(
+                    "aria-expanded",
+                    String(isOpen)
+                );
+
+
+                menuToggle.textContent =
+                    isOpen
+                        ? "✕"
+                        : "☰";
+
+            }
+        );
+
+
+        /* =================================================
+           CLOSE MOBILE MENU
+        ================================================= */
+
+        navLinks
+            .querySelectorAll("a")
+            .forEach(function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        navLinks.classList.remove(
+                            "open"
+                        );
+
+
+                        menuToggle.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+
+                        menuToggle.textContent =
+                            "☰";
+
+                    }
+                );
+
+            });
+
+
+        /* =================================================
+           CURRENT YEAR
+        ================================================= */
+
+        document.getElementById(
+            "year"
+        ).textContent =
+            new Date().getFullYear();
+
+
+        /* =================================================
+           ESCAPE HTML
+           
+           Protects notice title/message from
+           being interpreted as HTML.
+        ================================================= */
+
+        function escapeNoticeHTML(value) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                value ?? "";
+
+            return div.innerHTML;
+        }
+
+
+        /* =================================================
+           FORMAT NOTICE DATE
+        ================================================= */
+
+        function formatNoticeDate(dateValue) {
+
+            if (!dateValue) {
+                return "VoteRight";
+            }
+
+
+            const date =
+                new Date(dateValue);
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return "VoteRight";
+            }
+
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+        }
+
+
+        /* =================================================
+           LOAD NOTICES FROM BACKEND
+        ================================================= */
+
+        async function loadNotices() {
+
+            const noticeList =
+                document.getElementById(
+                    "noticeList"
+                );
+
+
+            if (!noticeList) {
+                return;
+            }
+
+
+            /* Loading */
+
+            noticeList.innerHTML = `
+                <div class="notice-loading">
+                    Loading latest notices...
+                </div>
+            `;
+
+
+            try {
+
+                /*
+                    Because Flask is serving
+                    this home.html, we use a
+                    relative API URL.
+
+                    Backend:
+                    /api/notices
+                */
+
+                const response =
+                    await fetch(
+                        "/api/notices",
+                        {
+                            method: "GET",
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            },
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                /* API ERROR */
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to load notices"
+                    );
+                }
+
+
+                /* NO NOTICES */
+
+                if (
+                    !Array.isArray(
+                        data.notices
+                    ) ||
+                    data.notices.length === 0
+                ) {
+
+                    noticeList.innerHTML = `
+                        <div class="notice-empty">
+                            No notices available right now.
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                /*
+                    Render notices.
+
+                    Backend already sends:
+                    newest notices first.
+                */
+
+                noticeList.innerHTML =
+                    data.notices
+                        .map(function (notice) {
+
+                            const title =
+                                escapeNoticeHTML(
+                                    notice.title
+                                );
+
+
+                            const message =
+                                escapeNoticeHTML(
+                                    notice.message
+                                );
+
+
+                            const date =
+                                formatNoticeDate(
+                                    notice.created_at
+                                );
+
+
+                            return `
+                                <article class="notice">
+
+                                    <div class="notice-top">
+
+                                        <span class="notice-label">
+                                            Announcement
+                                        </span>
+
+                                        <span class="notice-date">
+                                            ${date}
+                                        </span>
+
+                                    </div>
+
+                                    <h3>
+                                        ${title}
+                                    </h3>
+
+                                    <p>
+                                        ${message}
+                                    </p>
+
+                                </article>
+                            `;
+
+                        })
+                        .join("");
+
+
+            } catch (error) {
+
+                console.error(
+                    "Notice loading error:",
+                    error
+                );
+
+
+                noticeList.innerHTML = `
+                    <div class="notice-error">
+                        Unable to load notices.
+                        Please try again later.
+                    </div>
+                `;
+
+            }
+
+        }
+
+
+        /* =================================================
+           LOAD NOTICES WHEN HOME PAGE OPENS
+        ================================================= */
+
+        loadNotices();
+
+
+        /* =================================================
+           SMOOTH SCROLL
+        ================================================= */
+
+        document
+            .querySelectorAll(
+                'a[href^="#"]'
+            )
+            .forEach(function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function (event) {
+
+                        const target =
+                            document.querySelector(
+                                link.getAttribute(
+                                    "href"
+                                )
+                            );
+
+
+                        if (target) {
+
+                            event.preventDefault();
+
+
+                            target.scrollIntoView({
+                                behavior:
+                                    "smooth"
+                            });
+
+                        }
+
+                    }
+                );
+
+            });
+
+
+    </script>
+
+
+</body>
+
+</html>
