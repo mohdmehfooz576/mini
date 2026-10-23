@@ -660,11 +660,13 @@
             z-index: 2;
 
             width:
-                min(470px, 95%);
+                min(470px, 90%);
+            aspect-ratio: 1 / 1;    
 
-            height: 470px;
+            height: auto;
 
             padding: 8px;
+            box-sizing: border-box;
 
             border-radius: 28px;
 
@@ -687,7 +689,7 @@
                 rgba(212,175,55,.13);
 
             transform:
-                rotate(1.5deg);
+                rotate(0deg);
 
             transition:
                 transform .4s ease,
@@ -698,7 +700,7 @@
         .photo-frame:hover {
 
             transform:
-                rotate(0deg)
+               
                 translateY(-7px);
 
             box-shadow:
@@ -2059,6 +2061,10 @@
                 <a href="#notices">
                     Notices
                 </a>
+                <a href="check-status.html">
+                    check status
+                </a>
+                
 
             </nav>
 
@@ -2188,8 +2194,8 @@
 
                         <img
                             class="hero-photo"
-                            src="https://img.etimg.com/thumb/width-1200%2Cheight-900%2Cimgsize-119256%2Cresizemode-75%2Cmsid-127306992/nri/visit/asu-offers-two-country-study-pathway-for-indian-students-at-its-london-campus.jpg"
-                            alt="Student participating in a campus election"
+                            src="./image.jpeg"
+                            alt="Online Voting - VoteRight"
                         >
 
                         <div class="photo-overlay"></div>
