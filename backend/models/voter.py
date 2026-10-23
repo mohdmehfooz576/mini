@@ -1,3 +1,4 @@
+
 from database.db import get_connection
 
 
@@ -29,17 +30,10 @@ def create_voter(
 
     cursor.execute(
         query,
-        (
-            user_id,
-            roll_no,
-            mobile,
-            department,
-            year
-        )
+        (user_id, roll_no, mobile, department, year)
     )
 
     connection.commit()
-
     voter_id = cursor.lastrowid
 
     cursor.close()
@@ -62,16 +56,11 @@ def get_voter_by_user_id(user_id):
             users.name,
             users.email
         FROM voters
-        JOIN users
-            ON voters.user_id = users.id
+        JOIN users ON voters.user_id = users.id
         WHERE voters.user_id = %s
     """
 
-    cursor.execute(
-        query,
-        (user_id,)
-    )
-
+    cursor.execute(query, (user_id,))
     voter = cursor.fetchone()
 
     cursor.close()
@@ -97,17 +86,16 @@ def get_all_voters():
             voters.department,
             voters.year,
             voters.status,
+            voters.rejection_reason,
             voters.created_at,
             users.name,
             users.email
         FROM voters
-        JOIN users
-            ON voters.user_id = users.id
+        JOIN users ON voters.user_id = users.id
         ORDER BY voters.id DESC
     """
 
     cursor.execute(query)
-
     voters = cursor.fetchall()
 
     cursor.close()
@@ -116,7 +104,7 @@ def get_all_voters():
     return voters
 
 
-def update_voter_status(voter_id, status):
+def update_voter_status(voter_id, status, rejection_reason=None):
     connection = get_connection()
 
     if not connection:
@@ -124,22 +112,52 @@ def update_voter_status(voter_id, status):
 
     cursor = connection.cursor()
 
-    query = """
-        UPDATE voters
-        SET status = %s
-        WHERE id = %s
-    """
+    if status == "Rejected":
+        reason = (rejection_reason or "").strip()
 
-    cursor.execute(
-        query,
-        (
-            status,
-            voter_id
+        if not reason:
+            cursor.close()
+            connection.close()
+            return False
+
+        query = """
+            UPDATE voters
+            SET status = %s,
+                rejection_reason = %s
+            WHERE id = %s
+        """
+
+        cursor.execute(
+            query,
+            (status, reason, voter_id)
         )
-    )
+
+    elif status == "Approved":
+        query = """
+            UPDATE voters
+            SET status = %s,
+                rejection_reason = NULL
+            WHERE id = %s
+        """
+
+        cursor.execute(query, (status, voter_id))
+
+    elif status == "Pending":
+        query = """
+            UPDATE voters
+            SET status = %s,
+                rejection_reason = NULL
+            WHERE id = %s
+        """
+
+        cursor.execute(query, (status, voter_id))
+
+    else:
+        cursor.close()
+        connection.close()
+        return False
 
     connection.commit()
-
     changed = cursor.rowcount > 0
 
     cursor.close()
@@ -157,16 +175,11 @@ def delete_voter(voter_id):
     cursor = connection.cursor(dictionary=True)
 
     cursor.execute(
-        """
-        SELECT user_id
-        FROM voters
-        WHERE id = %s
-        """,
+        "SELECT user_id FROM voters WHERE id = %s",
         (voter_id,)
     )
 
     voter = cursor.fetchone()
-
     cursor.close()
 
     if not voter:
@@ -176,15 +189,11 @@ def delete_voter(voter_id):
     cursor = connection.cursor()
 
     cursor.execute(
-        """
-        DELETE FROM users
-        WHERE id = %s
-        """,
+        "DELETE FROM users WHERE id = %s",
         (voter["user_id"],)
     )
 
     connection.commit()
-
     deleted = cursor.rowcount > 0
 
     cursor.close()

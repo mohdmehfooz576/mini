@@ -1,3 +1,4 @@
+
 from flask import Blueprint, request, jsonify
 
 from database.db import get_connection
@@ -21,128 +22,82 @@ admin_routes = Blueprint(
 # ADMIN DASHBOARD STATISTICS
 # ==========================================
 
-@admin_routes.route(
-    "/stats",
-    methods=["GET"]
-)
+@admin_routes.route("/stats", methods=["GET"])
 @admin_required
 def dashboard_stats():
 
     connection = get_connection()
 
     if not connection:
-
         return jsonify({
             "success": False,
             "message": "Database connection failed"
         }), 500
 
-    cursor = connection.cursor(
-        dictionary=True
-    )
+    cursor = connection.cursor(dictionary=True)
 
     stats = {}
 
     # Total voters
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM voters
-        """
-    )
-
-    stats["total_voters"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["total_voters"] = cursor.fetchone()["total"]
 
     # Approved voters
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM voters
         WHERE status = 'Approved'
-        """
-    )
-
-    stats["approved_voters"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["approved_voters"] = cursor.fetchone()["total"]
 
     # Pending voters
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM voters
         WHERE status = 'Pending'
-        """
-    )
-
-    stats["pending_voters"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["pending_voters"] = cursor.fetchone()["total"]
 
     # Rejected voters
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM voters
         WHERE status = 'Rejected'
-        """
-    )
-
-    stats["rejected_voters"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["rejected_voters"] = cursor.fetchone()["total"]
 
     # Total elections
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM elections
-        """
-    )
-
-    stats["total_elections"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["total_elections"] = cursor.fetchone()["total"]
 
     # Active elections
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM elections
         WHERE status = 'Active'
-        """
-    )
-
-    stats["active_elections"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["active_elections"] = cursor.fetchone()["total"]
 
     # Stopped elections
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM elections
         WHERE status = 'Stopped'
-        """
-    )
-
-    stats["stopped_elections"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["stopped_elections"] = cursor.fetchone()["total"]
 
     # Total votes
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT COUNT(*) AS total
         FROM votes
-        """
-    )
-
-    stats["total_votes"] = (
-        cursor.fetchone()["total"]
-    )
+    """)
+    stats["total_votes"] = cursor.fetchone()["total"]
 
     cursor.close()
     connection.close()
@@ -164,11 +119,10 @@ def dashboard_stats():
 @admin_required
 def change_voter_status(voter_id):
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
-    status = data.get(
-        "status"
-    )
+    status = data.get("status")
+    rejection_reason = data.get("rejection_reason")
 
     allowed_statuses = [
         "Pending",
@@ -177,32 +131,55 @@ def change_voter_status(voter_id):
     ]
 
     if status not in allowed_statuses:
-
         return jsonify({
             "success": False,
-            "message": (
-                "Invalid voter status"
-            )
+            "message": "Invalid voter status"
         }), 400
+
+    # A rejection reason is required when rejecting a form.
+    if status == "Rejected":
+        if not isinstance(rejection_reason, str):
+            return jsonify({
+                "success": False,
+                "message": "Please provide a rejection reason"
+            }), 400
+
+        rejection_reason = rejection_reason.strip()
+
+        if not rejection_reason:
+            return jsonify({
+                "success": False,
+                "message": "Rejection reason cannot be empty"
+            }), 400
+
+    else:
+        # The model clears the old reason for Approved/Pending.
+        rejection_reason = None
 
     changed = update_voter_status(
         voter_id,
-        status
+        status,
+        rejection_reason
     )
 
     if not changed:
-
         return jsonify({
             "success": False,
-            "message": "Voter not found"
+            "message": (
+                "Voter not found or status could not be updated"
+            )
         }), 404
 
-    return jsonify({
+    response = {
         "success": True,
-        "message": (
-            f"Voter status changed to {status}"
-        )
-    }), 200
+        "message": f"Voter status changed to {status}",
+        "status": status
+    }
+
+    if status == "Rejected":
+        response["rejection_reason"] = rejection_reason
+
+    return jsonify(response), 200
 
 
 # ==========================================
@@ -216,12 +193,9 @@ def change_voter_status(voter_id):
 @admin_required
 def remove_voter(voter_id):
 
-    deleted = delete_voter(
-        voter_id
-    )
+    deleted = delete_voter(voter_id)
 
     if not deleted:
-
         return jsonify({
             "success": False,
             "message": "Voter not found"
@@ -229,7 +203,5 @@ def remove_voter(voter_id):
 
     return jsonify({
         "success": True,
-        "message": (
-            "Voter deleted successfully"
-        )
+        "message": "Voter deleted successfully"
     }), 200
