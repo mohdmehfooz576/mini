@@ -1,3 +1,4 @@
+
 from datetime import date
 
 from flask import Blueprint, request, jsonify
@@ -58,29 +59,36 @@ def cast_vote():
 
         return jsonify({
             "success": False,
-            "message": (
-                "Your voter account is not approved"
-            )
+            "message": "Your voter account is not approved"
         }), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
 
-    election_id = data.get(
-        "election_id"
-    )
-
-    candidate_id = data.get(
-        "candidate_id"
-    )
+    election_id = data.get("election_id")
+    candidate_id = data.get("candidate_id")
 
     if not election_id or not candidate_id:
 
         return jsonify({
             "success": False,
             "message": (
-                "Election ID and candidate ID "
-                "are required"
+                "Election ID and candidate ID are required"
             )
+        }), 400
+
+    # Validate election ID
+    try:
+        election_id = int(election_id)
+        candidate_id = int(candidate_id)
+
+        if election_id <= 0 or candidate_id <= 0:
+            raise ValueError
+
+    except (ValueError, TypeError):
+
+        return jsonify({
+            "success": False,
+            "message": "Invalid election or candidate ID"
         }), 400
 
     # Get election
@@ -95,36 +103,42 @@ def cast_vote():
             "message": "Election not found"
         }), 404
 
-    # Election must be active
-    if election["status"] != "Active":
-
-        return jsonify({
-            "success": False,
-            "message": "Election is stopped"
-        }), 403
-
-    # Check voting dates
     today = date.today()
 
-    if today < election["start_date"]:
-
-        return jsonify({
-            "success": False,
-            "message": (
-                "Voting has not started yet"
-            )
-        }), 403
+    # ======================================
+    # CHECK ELECTION EXPIRY FIRST
+    # ======================================
 
     if today > election["end_date"]:
 
         return jsonify({
             "success": False,
             "message": (
-                "Voting period has ended"
+                "Voting period has ended. "
+                "This election is now stopped."
             )
         }), 403
 
-    # One vote per voter per election
+    # Voting cannot start before start date
+    if today < election["start_date"]:
+
+        return jsonify({
+            "success": False,
+            "message": "Voting has not started yet"
+        }), 403
+
+    # Election must be Active
+    if election["status"] != "Active":
+
+        return jsonify({
+            "success": False,
+            "message": "Election is not currently active"
+        }), 403
+
+    # ======================================
+    # ONE VOTE PER VOTER PER ELECTION
+    # ======================================
+
     if has_voted(
         voter["id"],
         election_id
@@ -138,7 +152,10 @@ def cast_vote():
             )
         }), 409
 
-    # Create vote
+    # ======================================
+    # CREATE VOTE
+    # ======================================
+
     success, message = create_vote(
         voter["id"],
         election_id,
@@ -162,10 +179,6 @@ def cast_vote():
 # GET MY VOTES
 # ==========================================
 
-# ==========================================
-# GET MY VOTES
-# ==========================================
-
 @vote_routes.route(
     "/my-votes",
     methods=["GET"]
@@ -178,6 +191,7 @@ def my_votes():
     )
 
     if not voter:
+
         return jsonify({
             "success": False,
             "message": "Voter profile not found"
@@ -187,12 +201,14 @@ def my_votes():
         voter["id"]
     )
 
-    # Serialize MySQL DATETIME explicitly.
-    # Preserve the database's displayed wall-clock time.
+    # Preserve database wall-clock time
+    # for existing vote receipts.
     for vote in votes:
+
         voted_at = vote.get("voted_at")
 
         if voted_at is not None:
+
             vote["voted_at"] = voted_at.strftime(
                 "%Y-%m-%d %H:%M:%S"
             )

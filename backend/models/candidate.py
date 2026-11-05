@@ -1,10 +1,16 @@
+
 from database.db import get_connection
 
+
+# ==========================================
+# CREATE CANDIDATE
+# ==========================================
 
 def create_candidate(
     election_id,
     name,
-    year_position
+    year_position,
+    photo=None
 ):
     connection = get_connection()
 
@@ -13,36 +19,50 @@ def create_candidate(
 
     cursor = connection.cursor()
 
-    query = """
-        INSERT INTO candidates
-        (
-            election_id,
-            name,
-            year_position
+    try:
+        query = """
+            INSERT INTO candidates
+            (
+                election_id,
+                name,
+                year_position,
+                photo
+            )
+            VALUES (%s, %s, %s, %s)
+        """
+
+        cursor.execute(
+            query,
+            (
+                election_id,
+                name,
+                year_position,
+                photo
+            )
         )
-        VALUES (%s, %s, %s)
-    """
 
-    cursor.execute(
-        query,
-        (
-            election_id,
-            name,
-            year_position
-        )
-    )
+        connection.commit()
 
-    connection.commit()
+        candidate_id = cursor.lastrowid
 
-    candidate_id = cursor.lastrowid
+        return candidate_id
 
-    cursor.close()
-    connection.close()
+    except Exception as error:
+        connection.rollback()
+        print("Create candidate error:", error)
+        return None
 
-    return candidate_id
+    finally:
+        cursor.close()
+        connection.close()
 
+
+# ==========================================
+# GET CANDIDATES BY ELECTION
+# ==========================================
 
 def get_candidates_by_election(election_id):
+
     connection = get_connection()
 
     if not connection:
@@ -50,27 +70,38 @@ def get_candidates_by_election(election_id):
 
     cursor = connection.cursor(dictionary=True)
 
-    query = """
-        SELECT *
-        FROM candidates
-        WHERE election_id = %s
-        ORDER BY id ASC
-    """
+    try:
+        query = """
+            SELECT *
+            FROM candidates
+            WHERE election_id = %s
+            ORDER BY id ASC
+        """
 
-    cursor.execute(
-        query,
-        (election_id,)
-    )
+        cursor.execute(
+            query,
+            (election_id,)
+        )
 
-    candidates = cursor.fetchall()
+        candidates = cursor.fetchall()
 
-    cursor.close()
-    connection.close()
+        return candidates
 
-    return candidates
+    except Exception as error:
+        print("Get candidates error:", error)
+        return []
 
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# ==========================================
+# GET CANDIDATE BY ID
+# ==========================================
 
 def get_candidate_by_id(candidate_id):
+
     connection = get_connection()
 
     if not connection:
@@ -78,26 +109,82 @@ def get_candidate_by_id(candidate_id):
 
     cursor = connection.cursor(dictionary=True)
 
-    query = """
-        SELECT *
-        FROM candidates
-        WHERE id = %s
-    """
+    try:
+        query = """
+            SELECT *
+            FROM candidates
+            WHERE id = %s
+        """
 
-    cursor.execute(
-        query,
-        (candidate_id,)
-    )
+        cursor.execute(
+            query,
+            (candidate_id,)
+        )
 
-    candidate = cursor.fetchone()
+        candidate = cursor.fetchone()
 
-    cursor.close()
-    connection.close()
+        return candidate
 
-    return candidate
+    except Exception as error:
+        print("Get candidate error:", error)
+        return None
 
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# ==========================================
+# UPDATE CANDIDATE PHOTO
+# ==========================================
+
+def update_candidate_photo(
+    candidate_id,
+    photo
+):
+
+    connection = get_connection()
+
+    if not connection:
+        return False
+
+    cursor = connection.cursor()
+
+    try:
+        query = """
+            UPDATE candidates
+            SET photo = %s
+            WHERE id = %s
+        """
+
+        cursor.execute(
+            query,
+            (
+                photo,
+                candidate_id
+            )
+        )
+
+        connection.commit()
+
+        return cursor.rowcount > 0
+
+    except Exception as error:
+        connection.rollback()
+        print("Update candidate photo error:", error)
+        return False
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# ==========================================
+# DELETE CANDIDATE
+# ==========================================
 
 def delete_candidate(candidate_id):
+
     connection = get_connection()
 
     if not connection:
@@ -105,52 +192,47 @@ def delete_candidate(candidate_id):
 
     cursor = connection.cursor(dictionary=True)
 
-    cursor.execute(
-        """
-        SELECT vote_count
-        FROM candidates
-        WHERE id = %s
-        """,
-        (candidate_id,)
-    )
-
-    candidate = cursor.fetchone()
-
-    if not candidate:
-        cursor.close()
-        connection.close()
-
-        return False, "Candidate not found"
-
-    if candidate["vote_count"] > 0:
-        cursor.close()
-        connection.close()
-
-        return (
-            False,
-            "Candidate cannot be deleted after receiving votes"
+    try:
+        cursor.execute(
+            """
+            SELECT vote_count
+            FROM candidates
+            WHERE id = %s
+            """,
+            (candidate_id,)
         )
 
-    cursor.close()
+        candidate = cursor.fetchone()
 
-    cursor = connection.cursor()
+        if not candidate:
+            return False, "Candidate not found"
 
-    cursor.execute(
-        """
-        DELETE FROM candidates
-        WHERE id = %s
-        """,
-        (candidate_id,)
-    )
+        if candidate["vote_count"] > 0:
+            return (
+                False,
+                "Candidate cannot be deleted after receiving votes"
+            )
 
-    connection.commit()
+        cursor.execute(
+            """
+            DELETE FROM candidates
+            WHERE id = %s
+            """,
+            (candidate_id,)
+        )
 
-    deleted = cursor.rowcount > 0
+        connection.commit()
 
-    cursor.close()
-    connection.close()
+        if cursor.rowcount > 0:
+            return True, "Candidate deleted"
 
-    if deleted:
-        return True, "Candidate deleted"
+        return False, "Candidate could not be deleted"
 
-    return False, "Candidate could not be deleted"
+    except Exception as error:
+        connection.rollback()
+        print("Delete candidate error:", error)
+        return False, "Candidate deletion failed"
+
+    finally:
+        cursor.close()
+        connection.close()

@@ -5,239 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoteRight | Check Application Status</title>
+
     <link rel="stylesheet" href="css/style.css">
 
-    <style>
-        :root {
-            --gold: #c9a45c;
-            --gold-light: #e7cc8b;
-            --black: #101010;
-            --panel: #191919;
-            --muted: #b7b1a5;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: var(--black);
-            color: #f5f1e8;
-            font-family: Arial, sans-serif;
-        }
-
-        .status-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 14px;
-            padding: 20px 7%;
-            border-bottom: 1px solid #3a3020;
-            background: #0b0b0b;
-        }
-
-        .status-brand {
-            color: var(--gold-light);
-            font-size: 24px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .status-nav a:not(.status-brand) {
-            color: #eee6d5;
-            text-decoration: none;
-            margin-left: 18px;
-            font-size: 14px;
-        }
-
-        .status-nav a:hover {
-            color: var(--gold-light);
-        }
-
-        .status-wrapper {
-            width: min(92%, 520px);
-            margin: 65px auto;
-        }
-
-        .status-card {
-            background: var(--panel);
-            border: 1px solid #55452a;
-            border-radius: 16px;
-            padding: 34px;
-            box-shadow: 0 16px 50px #0008;
-        }
-
-        .status-eyebrow {
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        h1 {
-            margin: 12px 0;
-            font-size: 32px;
-        }
-
-        .status-description {
-            color: var(--muted);
-            line-height: 1.7;
-            margin-bottom: 28px;
-        }
-
-        .status-field {
-            margin-bottom: 19px;
-        }
-
-        .status-field label {
-            display: block;
-            margin-bottom: 9px;
-            color: #e8dfce;
-            font-size: 14px;
-        }
-
-        .status-field input {
-            box-sizing: border-box;
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid #514630;
-            background: #101010;
-            color: white;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .status-field input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 2px #c9a45c25;
-        }
-
-        .status-button {
-            width: 100%;
-            border: none;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 5px;
-            background: var(--gold);
-            color: #15110a;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .status-button:hover {
-            background: var(--gold-light);
-        }
-
-        .status-button:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-
-        #statusMessage {
-            margin-top: 20px;
-            line-height: 1.6;
-            overflow-wrap: anywhere;
-        }
-
-        .result-card {
-            margin-top: 22px;
-            padding: 20px;
-            border: 1px solid #55452a;
-            border-radius: 10px;
-            background: #111;
-        }
-
-        .result-card h2 {
-            color: var(--gold-light);
-            margin-top: 0;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .pending {
-            background: #493b1b;
-            color: #f3d58d;
-        }
-
-        .approved {
-            background: #183d2b;
-            color: #9be5b8;
-        }
-
-        .rejected {
-            background: #4a2020;
-            color: #ffb2b2;
-        }
-
-        .reason-box {
-            margin-top: 16px;
-            padding: 13px;
-            border-left: 3px solid var(--gold);
-            background: #211d15;
-            color: #eee2c9;
-        }
-
-        .status-footer {
-            text-align: center;
-            color: #888174;
-            font-size: 13px;
-            margin: 25px 0;
-        }
-
-        @media (max-width: 520px) {
-            .status-card {
-                padding: 23px;
-            }
-
-            .status-wrapper {
-                margin-top: 35px;
-            }
-
-            h1 {
-                font-size: 27px;
-            }
-
-            .status-nav a:not(.status-brand) {
-                margin-left: 0;
-                margin-right: 12px;
-            }
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
-<body>
-    <nav class="status-nav">
-        <a class="status-brand" href="index.html">VoteRight</a>
+<body class="status-page">
 
-        <div>
-            <a href="index.html">Home</a>
-            <a href="index.html#how-it-works">How It Works</a>
-            <a href="check-status.html">Check Status</a>
-            <a href="index.html#notices">Notices</a>
+    <nav class="status-nav">
+        <a class="status-brand" href="home.html">
+            <span class="status-brand-icon">✓</span>
+            VoteRight
+        </a>
+
+        <div class="status-nav-links">
+            <a href="home.html">Home</a>
+            <a href="home.html#how-it-works">How It Works</a>
+            <a href="check-status.html" class="active">Check Status</a>
+            <a href="home.html#notices">Notices</a>
+            <a href="index.html" class="status-login-link">Login</a>
         </div>
     </nav>
 
+
     <main class="status-wrapper">
+
         <section class="status-card">
-            <div class="status-eyebrow">Voter verification</div>
+
+            <div class="status-brand-mark">✓</div>
+
+            <div class="status-eyebrow">VOTERIGHT • VOTER VERIFICATION</div>
+
             <h1>Check Your Status</h1>
 
             <p class="status-description">
-                Enter the roll number and email address used during registration
-                to check your voter application status.
+                Enter the roll number and email address used during
+                registration to check your voter application status.
             </p>
 
+
             <form id="statusForm">
+
                 <div class="status-field">
+
                     <label for="roll_no">Roll Number</label>
+
                     <input
                         type="text"
                         id="roll_no"
@@ -246,10 +61,14 @@
                         autocomplete="off"
                         required
                     >
+
                 </div>
 
+
                 <div class="status-field">
+
                     <label for="email">Registered Email Address</label>
+
                     <input
                         type="email"
                         id="email"
@@ -258,30 +77,63 @@
                         autocomplete="email"
                         required
                     >
+
                 </div>
 
-                <button class="status-button" id="checkButton" type="submit">
-                    Check Application Status
+
+                <button
+                    class="status-button"
+                    id="checkButton"
+                    type="submit"
+                >
+                    Check Application Status →
                 </button>
+
             </form>
 
-            <div id="statusMessage" role="status" aria-live="polite"></div>
+
+            <div
+                id="statusMessage"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+            <div class="status-security-note">
+                <span>🔒</span>
+                Your information is checked securely.
+            </div>
+
         </section>
 
+
         <p class="status-footer">
-            VoteRight · Secure Online Voting System
+            © VoteRight · Secure Online Voting System
         </p>
+
     </main>
 
+
+    <!-- ORIGINAL JAVASCRIPT — KEPT INSIDE HTML -->
     <script>
+
         const API_BASE = "http://127.0.0.1:5000";
 
-        const statusForm = document.getElementById("statusForm");
-        const statusMessage = document.getElementById("statusMessage");
-        const checkButton = document.getElementById("checkButton");
+        const statusForm =
+            document.getElementById("statusForm");
+
+        const statusMessage =
+            document.getElementById("statusMessage");
+
+        const checkButton =
+            document.getElementById("checkButton");
+
+
+        /* HTML ESCAPING */
 
         function escapeHTML(value) {
+
             return String(value ?? "").replace(/[&<>"']/g, function (char) {
+
                 return {
                     "&": "&amp;",
                     "<": "&lt;",
@@ -289,91 +141,164 @@
                     '"': "&quot;",
                     "'": "&#39;"
                 }[char];
+
             });
+
         }
 
+
+        /* CHECK APPLICATION STATUS */
+
         statusForm.addEventListener("submit", async function (event) {
+
             event.preventDefault();
 
-            const roll_no = document.getElementById("roll_no").value.trim();
-            const email = document.getElementById("email").value.trim();
+            const roll_no =
+                document.getElementById("roll_no").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
 
             statusMessage.replaceChildren();
+
             checkButton.disabled = true;
+
             checkButton.textContent = "Checking...";
 
+
             try {
+
                 const response = await fetch(
                     `${API_BASE}/api/voters/check-status`,
                     {
                         method: "POST",
+
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ roll_no, email })
+
+                        body: JSON.stringify({
+                            roll_no,
+                            email
+                        })
                     }
                 );
 
+
                 const data = await response.json();
 
+
                 if (!response.ok || data.success !== true) {
+
                     statusMessage.textContent =
-                        data.message || "Status could not be found. Check your details.";
+                        data.message ||
+                        "Status could not be found. Check your details.";
+
+                    statusMessage.className = "status-error";
+
                     return;
+
                 }
 
+
                 const status = String(data.status || "");
+
+
                 const statusClass = {
                     Pending: "pending",
                     Approved: "approved",
                     Rejected: "rejected"
                 }[status] || "pending";
 
+
                 let explanation = "";
 
+
                 if (status === "Pending") {
+
                     explanation =
                         "Your application is awaiting administrator review.";
+
                 } else if (status === "Approved") {
+
                     explanation =
                         "Your voter application has been approved.";
+
                 } else if (status === "Rejected") {
+
                     explanation =
                         "Your voter application has been rejected.";
+
                 }
 
+
                 const reason = status === "Rejected"
-                    ? (data.rejection_reason || "No rejection reason was provided.")
+                    ? (
+                        data.rejection_reason ||
+                        "No rejection reason was provided."
+                    )
                     : "";
 
+
+                statusMessage.className = "status-success";
+
+
                 statusMessage.innerHTML = `
-                    <div class="result-card">
+
+                    <div class="status-result-card">
+
+                        <div class="status-result-icon">✓</div>
+
                         <h2>Application Result</h2>
-                        <p>
-                            <strong>Status:</strong>
-                            <span class="status-badge ${statusClass}">
-                                ${escapeHTML(status)}
-                            </span>
+
+                        <p class="status-result-label">
+                            YOUR APPLICATION STATUS
                         </p>
-                        <p>${escapeHTML(explanation)}</p>
+
+                        <span class="status-badge ${statusClass}">
+                            ${escapeHTML(status)}
+                        </span>
+
+                        <p class="status-explanation">
+                            ${escapeHTML(explanation)}
+                        </p>
+
                         ${
                             status === "Rejected"
-                                ? `<div class="reason-box">
-                                       <strong>Reason:</strong><br>
-                                       ${escapeHTML(reason)}
-                                   </div>`
+                                ? `
+                                    <div class="reason-box">
+                                        <strong>Rejection Reason</strong>
+                                        <p>${escapeHTML(reason)}</p>
+                                    </div>
+                                `
                                 : ""
                         }
+
                     </div>
+
                 `;
+
+
             } catch (error) {
+
+                statusMessage.className = "status-error";
+
                 statusMessage.textContent =
                     "Unable to connect to VoteRight server. Please ensure the backend is running and try again.";
+
             } finally {
+
                 checkButton.disabled = false;
-                checkButton.textContent = "Check Application Status";
+
+                checkButton.textContent =
+                    "Check Application Status →";
+
             }
+
         });
+
     </script>
+
 </body>
 </html>

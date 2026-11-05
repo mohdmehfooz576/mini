@@ -2,12 +2,17 @@
 from database.db import get_connection
 
 
+# ==========================================
+# CREATE VOTER
+# ==========================================
+
 def create_voter(
     user_id,
-    roll_no,
+    enrolment_no,
     mobile,
     department,
-    year
+    year,
+    status="Pending"
 ):
     connection = get_connection()
 
@@ -16,33 +21,46 @@ def create_voter(
 
     cursor = connection.cursor()
 
-    query = """
-        INSERT INTO voters
-        (
+    try:
+        cursor.execute("""
+            INSERT INTO voters (
+                user_id,
+                enrolment_no,
+                mobile,
+                department,
+                year,
+                status
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
             user_id,
-            roll_no,
+            enrolment_no,
             mobile,
             department,
-            year
-        )
-        VALUES (%s, %s, %s, %s, %s)
-    """
+            year,
+            status
+        ))
 
-    cursor.execute(
-        query,
-        (user_id, roll_no, mobile, department, year)
-    )
+        voter_id = cursor.lastrowid
+        connection.commit()
+        return voter_id
 
-    connection.commit()
-    voter_id = cursor.lastrowid
+    except Exception as error:
+        connection.rollback()
+        print("Create voter error:", error)
+        return None
 
-    cursor.close()
-    connection.close()
+    finally:
+        cursor.close()
+        connection.close()
 
-    return voter_id
 
+# ==========================================
+# GET VOTER BY USER ID
+# ==========================================
 
 def get_voter_by_user_id(user_id):
+
     connection = get_connection()
 
     if not connection:
@@ -50,26 +68,30 @@ def get_voter_by_user_id(user_id):
 
     cursor = connection.cursor(dictionary=True)
 
-    query = """
-        SELECT
-            voters.*,
-            users.name,
-            users.email
-        FROM voters
-        JOIN users ON voters.user_id = users.id
-        WHERE voters.user_id = %s
-    """
+    try:
+        cursor.execute("""
+            SELECT *
+            FROM voters
+            WHERE user_id = %s
+        """, (user_id,))
 
-    cursor.execute(query, (user_id,))
-    voter = cursor.fetchone()
+        return cursor.fetchone()
 
-    cursor.close()
-    connection.close()
+    except Exception as error:
+        print("Get voter error:", error)
+        return None
 
-    return voter
+    finally:
+        cursor.close()
+        connection.close()
 
+
+# ==========================================
+# GET ALL VOTERS
+# ==========================================
 
 def get_all_voters():
+
     connection = get_connection()
 
     if not connection:
@@ -77,126 +99,160 @@ def get_all_voters():
 
     cursor = connection.cursor(dictionary=True)
 
-    query = """
-        SELECT
-            voters.id,
-            voters.user_id,
-            voters.roll_no,
-            voters.mobile,
-            voters.department,
-            voters.year,
-            voters.status,
-            voters.rejection_reason,
-            voters.created_at,
-            users.name,
-            users.email
-        FROM voters
-        JOIN users ON voters.user_id = users.id
-        ORDER BY voters.id DESC
-    """
+    try:
+        cursor.execute("""
+            SELECT
+                voters.id,
+                voters.user_id,
+                voters.enrolment_no,
+                voters.mobile,
+                voters.department,
+                voters.year,
+                voters.status,
+                voters.rejection_reason,
+                voters.created_at,
+                users.name,
+                users.email
+            FROM voters
+            INNER JOIN users
+                ON voters.user_id = users.id
+            ORDER BY voters.created_at DESC
+        """)
 
-    cursor.execute(query)
-    voters = cursor.fetchall()
+        return cursor.fetchall()
 
-    cursor.close()
-    connection.close()
+    except Exception as error:
+        print("Get all voters error:", error)
+        return []
 
-    return voters
-
-
-def update_voter_status(voter_id, status, rejection_reason=None):
-    connection = get_connection()
-
-    if not connection:
-        return False
-
-    cursor = connection.cursor()
-
-    if status == "Rejected":
-        reason = (rejection_reason or "").strip()
-
-        if not reason:
-            cursor.close()
-            connection.close()
-            return False
-
-        query = """
-            UPDATE voters
-            SET status = %s,
-                rejection_reason = %s
-            WHERE id = %s
-        """
-
-        cursor.execute(
-            query,
-            (status, reason, voter_id)
-        )
-
-    elif status == "Approved":
-        query = """
-            UPDATE voters
-            SET status = %s,
-                rejection_reason = NULL
-            WHERE id = %s
-        """
-
-        cursor.execute(query, (status, voter_id))
-
-    elif status == "Pending":
-        query = """
-            UPDATE voters
-            SET status = %s,
-                rejection_reason = NULL
-            WHERE id = %s
-        """
-
-        cursor.execute(query, (status, voter_id))
-
-    else:
+    finally:
         cursor.close()
         connection.close()
-        return False
-
-    connection.commit()
-    changed = cursor.rowcount > 0
-
-    cursor.close()
-    connection.close()
-
-    return changed
 
 
-def delete_voter(voter_id):
+# ==========================================
+# UPDATE VOTER STATUS
+# ==========================================
+
+def update_voter_status(
+    voter_id,
+    status,
+    rejection_reason=None
+):
+
     connection = get_connection()
 
     if not connection:
         return False
 
-    cursor = connection.cursor(dictionary=True)
+    cursor = connection.cursor()
 
-    cursor.execute(
-        "SELECT user_id FROM voters WHERE id = %s",
-        (voter_id,)
-    )
+    try:
+        if status == "Rejected":
 
-    voter = cursor.fetchone()
-    cursor.close()
+            cursor.execute("""
+                UPDATE voters
+                SET
+                    status = %s,
+                    rejection_reason = %s
+                WHERE id = %s
+            """, (
+                status,
+                rejection_reason,
+                voter_id
+            ))
 
-    if not voter:
+        else:
+
+            cursor.execute("""
+                UPDATE voters
+                SET
+                    status = %s,
+                    rejection_reason = NULL
+                WHERE id = %s
+            """, (
+                status,
+                voter_id
+            ))
+
+        connection.commit()
+        return cursor.rowcount > 0
+
+    except Exception as error:
+        connection.rollback()
+        print("Update voter status error:", error)
+        return False
+
+    finally:
+        cursor.close()
         connection.close()
+
+
+# ==========================================
+# DELETE VOTER - VOTE PROTECTION
+# ==========================================
+
+def delete_voter(voter_id):
+
+    connection = get_connection()
+
+    if not connection:
         return False
 
     cursor = connection.cursor()
 
-    cursor.execute(
-        "DELETE FROM users WHERE id = %s",
-        (voter["user_id"],)
-    )
+    try:
+        # Lock voter record while checking and deleting.
+        cursor.execute("""
+            SELECT user_id
+            FROM voters
+            WHERE id = %s
+            FOR UPDATE
+        """, (voter_id,))
 
-    connection.commit()
-    deleted = cursor.rowcount > 0
+        result = cursor.fetchone()
 
-    cursor.close()
-    connection.close()
+        if not result:
+            connection.rollback()
+            return False
 
-    return deleted
+        user_id = result[0]
+
+        # Check whether this voter has cast any vote.
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM votes
+            WHERE voter_id = %s
+        """, (voter_id,))
+
+        vote_count = cursor.fetchone()[0]
+
+        if vote_count > 0:
+            connection.rollback()
+            print(
+                f"Voter deletion blocked: voter {voter_id} "
+                f"has {vote_count} vote(s)."
+            )
+            return False
+
+        # Delete only if no vote exists.
+        cursor.execute("""
+            DELETE FROM users
+            WHERE id = %s
+        """, (user_id,))
+
+        if cursor.rowcount == 0:
+            connection.rollback()
+            return False
+
+        connection.commit()
+        return True
+
+    except Exception as error:
+        connection.rollback()
+        print("Delete voter error:", error)
+        return False
+
+    finally:
+        cursor.close()
+        connection.close()

@@ -1,19 +1,21 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>VoteRight - Elections</title>
 
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-
-    <header class="topbar">
+    <!-- LEFT SIDEBAR -->
+    <aside class="topbar">
 
         <div class="brand">
             <div class="logo-icon">✓</div>
@@ -21,81 +23,132 @@
         </div>
 
         <nav>
-
             <a href="dashboard.html">
-                Dashboard
+                <span>⌂</span> Dashboard
             </a>
 
             <a href="elections.html" class="active">
-                Elections
+                <span>▣</span> Elections
             </a>
 
             <a href="my-votes.html">
-                My Votes
+                <span>✓</span> My Votes
             </a>
 
             <a href="results.html">
-                Results
+                <span>▥</span> Results
             </a>
 
-            <button
-                type="button"
-                onclick="logout()"
-                class="logout-btn"
-            >
-                Logout
+            <button type="button" onclick="logout()" class="logout-btn">
+                <span>↪</span> Logout
             </button>
-
         </nav>
 
-    </header>
+        <div class="sidebar-bottom">
+            SECURE ONLINE VOTING
+        </div>
+
+    </aside>
 
 
-    <!-- MAIN -->
-
+    <!-- MAIN CONTENT -->
     <main class="dashboard-container">
 
+        <!-- TOP BAR -->
+        <header class="dashboard-top">
+
+            <div class="mobile-menu-label">
+                ☰ &nbsp; VoteRight
+            </div>
+
+            <label class="search-box">
+                <span>⌕</span>
+                <input
+                    type="search"
+                    id="electionSearch"
+                    placeholder="Search elections..."
+                    aria-label="Search elections"
+                >
+            </label>
+
+            <div class="top-actions">
+                <a href="dashboard.html" class="notification-button" title="Dashboard">
+                    ⌂
+                </a>
+
+                <div class="top-profile">
+                    <span class="top-profile-icon">♙</span>
+                    <span>VoteRight Voter</span>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- PAGE BANNER -->
         <section class="welcome-section">
 
-            <div>
+            <div class="welcome-content">
 
                 <p class="small-text">
-                    VoteRight Elections
+                    VOTERIGHT • ELECTION CENTRE
                 </p>
 
-                <h1>
-                    Available Elections
-                </h1>
+                <h1>Available Elections</h1>
 
                 <p>
                     Choose an active election and cast your vote.
                 </p>
 
+                <span class="welcome-date">
+                    ✦ &nbsp; YOUR VOTE MATTERS
+                </span>
+
+            </div>
+
+            <div class="welcome-decoration" aria-hidden="true">
+                <div class="gold-orbit"></div>
+
+                <div class="vote-illustration">
+                    <span class="vote-check">✓</span>
+                    <strong>VOTE</strong>
+                </div>
             </div>
 
         </section>
 
 
-        <!-- MESSAGE -->
+        <!-- PAGE HEADING -->
+        <section class="section-heading election-page-heading">
+            <h2>🗳️ &nbsp; All Elections</h2>
+            <span class="election-page-note">
+                Select an election to continue
+            </span>
+        </section>
 
-        <div
-            id="message"
-            class="message"
-        >
+
+        <!-- MESSAGE -->
+        <div id="message" class="message">
             Loading elections...
         </div>
 
 
-        <!-- ELECTIONS -->
-
+        <!-- ELECTION CARDS -->
         <section
             id="electionsContainer"
-            class="quick-actions"
+            class="elections-grid"
         ></section>
+
+
+        <!-- FOOTER -->
+        <footer class="dashboard-footer">
+            © VoteRight — Secure Online Voting System
+        </footer>
 
     </main>
 
 
+    <!-- ORIGINAL JAVASCRIPT -->
     <script>
 
         /* =========================================
@@ -204,7 +257,7 @@
                             );
 
                         card.className =
-                            "action-card";
+                            "election-page-card";
 
 
                         /*
@@ -250,7 +303,7 @@
                                     class="btn-primary"
                                     onclick="voteNow(${election.id})"
                                 >
-                                    Vote Now
+                                    Vote Now →
                                 </button>
 
                             `;
@@ -258,14 +311,12 @@
                         } else {
 
                             buttonHTML = `
-
                                 <button
                                     class="btn-primary"
                                     disabled
                                 >
                                     Election Stopped
                                 </button>
-
                             `;
 
                         }
@@ -277,8 +328,16 @@
 
                         card.innerHTML = `
 
-                            <div class="action-icon">
-                                🗳️
+                            <div class="election-card-top">
+
+                                <div class="election-large-icon">
+                                    🗳️
+                                </div>
+
+                                <span class="${statusClass}">
+                                    ${escapeHTML(statusText)}
+                                </span>
+
                             </div>
 
                             <h3>
@@ -287,39 +346,36 @@
                                 )}
                             </h3>
 
-                            <p>
+                            <p class="election-description">
                                 ${escapeHTML(
                                     election.description ||
                                     "Online election"
                                 )}
                             </p>
 
-                            <p>
-                                <strong>
-                                    Start:
-                                </strong>
-                                ${formatDate(
-                                    election.start_date
-                                )}
-                            </p>
+                            <div class="election-dates">
 
-                            <p>
-                                <strong>
-                                    End:
-                                </strong>
-                                ${formatDate(
-                                    election.end_date
-                                )}
-                            </p>
+                                <div>
+                                    <span>START DATE</span>
+                                    <strong>
+                                        ${formatDate(
+                                            election.start_date
+                                        )}
+                                    </strong>
+                                </div>
 
-                            <p class="${statusClass}">
-                                <strong>
-                                    Status:
-                                </strong>
-                                ${statusText}
-                            </p>
+                                <div>
+                                    <span>END DATE</span>
+                                    <strong>
+                                        ${formatDate(
+                                            election.end_date
+                                        )}
+                                    </strong>
+                                </div>
 
-                            <div style="margin-top: 15px;">
+                            </div>
+
+                            <div class="election-card-action">
                                 ${buttonHTML}
                             </div>
 
@@ -417,6 +473,39 @@
             return div.innerHTML;
 
         }
+
+
+        /* =========================================
+           ELECTION SEARCH
+        ========================================= */
+
+        document.getElementById(
+            "electionSearch"
+        ).addEventListener(
+            "input",
+            function() {
+
+                const searchValue =
+                    this.value.toLowerCase();
+
+                document.querySelectorAll(
+                    ".election-page-card"
+                ).forEach(
+                    function(card) {
+
+                        const text =
+                            card.textContent.toLowerCase();
+
+                        card.style.display =
+                            text.includes(searchValue)
+                                ? ""
+                                : "none";
+
+                    }
+                );
+
+            }
+        );
 
 
         /* =========================================

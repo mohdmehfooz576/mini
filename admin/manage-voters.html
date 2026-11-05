@@ -6,238 +6,773 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoteRight - Manage Voters</title>
     <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+.voter-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.voter-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    min-height: 78px;
+    border: 1px solid rgba(197, 157, 86, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    min-width: 0;
+}
+
+.voter-summary-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: rgba(197, 157, 86, 0.13);
+    color: #c9a45c;
+    font-size: 19px;
+}
+
+.voter-summary-card small {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+    opacity: 0.75;
+}
+
+.voter-summary-card strong {
+    display: block;
+    font-size: 21px;
+    line-height: 1.2;
+    color: #c9a45c;
+}
+
+        /* Status filters */
+        .voter-filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 22px 0;
+        }
+
+        .voter-filter-btn {
+            border: 1px solid rgba(197, 157, 86, 0.4);
+            background: transparent;
+            color: inherit;
+            padding: 10px 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            font: inherit;
+            transition: 0.2s ease;
+        }
+
+        .voter-filter-btn:hover,
+        .voter-filter-btn.active {
+            background: #c9a45c;
+            color: #17130c;
+            border-color: #c9a45c;
+        }
+
+        .voter-filter-count {
+            margin-left: 5px;
+            font-weight: 700;
+        }
+
+        .voter-action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .voter-status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .voter-status-badge.approved {
+            background: rgba(34, 197, 94, 0.13);
+            color: #22c55e;
+        }
+
+        .voter-status-badge.pending {
+            background: rgba(234, 179, 8, 0.13);
+            color: #eab308;
+        }
+
+        .voter-status-badge.rejected {
+            background: rgba(239, 68, 68, 0.13);
+            color: #ef4444;
+        }
+
+        .table-empty {
+            text-align: center;
+            padding: 25px !important;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 900px) {
+            .voter-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .voter-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .voter-filter-tabs {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .voter-filter-btn {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-<header class="topbar">
-    <div class="brand">
-        <div class="logo-icon">✓</div>
-        <span>VoteRight Admin</span>
-    </div>
-    <nav>
-        <a href="manage-voters.html" class="active">Manage Voters</a>
-        <a href="manage-elections.html">Elections</a>
-        <a href="candidates.html">Candidates</a>
-        <button type="button" onclick="logout()" class="logout-btn">Logout</button>
-    </nav>
-</header>
 
-<main class="dashboard-container">
-    <section class="welcome-section">
-        <div>
-            <p class="small-text">VoteRight Administration</p>
-            <h1>Manage Voters</h1>
-            <p>Approve, reject and manage voter registrations.</p>
+    <aside class="topbar">
+        <div class="brand">
+            <div class="logo-icon">✓</div>
+            <span>VoteRight Admin</span>
         </div>
-    </section>
 
-    <div id="message" class="message">Loading voters...</div>
+        <nav>
+            <a href="manage-voters.html" class="active">♙ &nbsp; Manage Voters</a>
+            <a href="manage-elections.html">▣ &nbsp; Elections</a>
+            <a href="candidates.html">♟ &nbsp; Candidates</a>
+            <a href="manage-notices.html">▤ &nbsp; Notices</a>
+            <a href="../results.html">▥ &nbsp; Results</a>
+            <button type="button" onclick="logout()" class="logout-btn">↪ &nbsp; Logout</button>
+        </nav>
 
-    <section class="dashboard-card">
-        <div class="section-heading">
-            <h2>Registered Voters</h2>
-            <button type="button" class="btn-primary" onclick="loadVoters()">Refresh</button>
+        <div class="sidebar-bottom">SECURE ONLINE VOTING</div>
+    </aside>
+
+
+    <main class="dashboard-container">
+
+        <header class="dashboard-top">
+            <div class="mobile-menu-label">☰ &nbsp; VoteRight Admin</div>
+
+            <label class="search-box">
+                <span>⌕</span>
+                <input type="search" id="voterSearch"
+                       placeholder="Search voters...">
+            </label>
+
+            <div class="top-actions">
+                <a href="../home.html" class="notification-button" title="Home">⌂</a>
+                <div class="top-profile">
+                    <span class="top-profile-icon">♙</span>
+                    <span>Administrator</span>
+                </div>
+            </div>
+        </header>
+
+
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <p class="small-text">VOTERIGHT • ADMINISTRATION</p>
+                <h1>Manage Voters</h1>
+                <p>Review registrations and manage voter accounts.</p>
+                <span class="welcome-date">✦ &nbsp; VOTER VERIFICATION CENTRE</span>
+            </div>
+
+            <div class="welcome-decoration" aria-hidden="true">
+                <div class="gold-orbit"></div>
+                <div class="vote-illustration">
+                    <span class="vote-check">✓</span>
+                    <strong>ADMIN</strong>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- VOTER STATUS SUMMARY -->
+
+        <div class="voter-summary">
+
+            <div class="voter-summary-card">
+                <span class="voter-summary-icon">♙</span>
+                <div>
+                    <small>TOTAL VOTERS</small>
+                    <strong id="totalVoters">—</strong>
+                </div>
+            </div>
+
+            <div class="voter-summary-card">
+                <span class="voter-summary-icon">✓</span>
+                <div>
+                    <small>APPROVED VOTERS</small>
+                    <strong id="approvedVoters">—</strong>
+                </div>
+            </div>
+
+            <div class="voter-summary-card">
+                <span class="voter-summary-icon">◷</span>
+                <div>
+                    <small>PENDING VOTERS</small>
+                    <strong id="pendingVoters">—</strong>
+                </div>
+            </div>
+
+            <div class="voter-summary-card">
+                <span class="voter-summary-icon">✕</span>
+                <div>
+                    <small>REJECTED VOTERS</small>
+                    <strong id="rejectedVoters">—</strong>
+                </div>
+            </div>
+
         </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Roll No.</th>
-                        <th>Department</th>
-                        <th>Year</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="votersTableBody"></tbody>
-            </table>
-        </div>
-    </section>
-</main>
 
-<script>
-const token = localStorage.getItem("vr_token");
-const savedUser = localStorage.getItem("vr_user");
 
-try {
-    const user = JSON.parse(savedUser || "null");
-    if (!token || !user || user.role !== "admin") {
-        window.location.href = "../index.html";
-    }
-} catch (error) {
-    window.location.href = "../index.html";
-}
+        <section class="dashboard-card voter-management-panel">
 
-function logout() {
-    localStorage.removeItem("vr_token");
-    localStorage.removeItem("vr_user");
-    window.location.href = "../index.html";
-}
+            <div class="section-heading">
+                <div>
+                    <p class="small-text">REGISTRATION MANAGEMENT</p>
+                    <h2>♙ &nbsp; Registered Voters</h2>
+                </div>
 
-function escapeHTML(value) {
-    const div = document.createElement("div");
-    div.textContent = value == null ? "" : String(value);
-    return div.innerHTML;
-}
+                <button type="button" class="btn-primary"
+                        onclick="loadVoters()">
+                    ↻ &nbsp; Refresh
+                </button>
+            </div>
 
-async function loadVoters() {
-    const message = document.getElementById("message");
-    const tableBody = document.getElementById("votersTableBody");
 
-    message.textContent = "Loading voters...";
-    tableBody.replaceChildren();
+            <!-- STATUS FILTERS -->
+
+            <div class="voter-filter-tabs">
+
+                <button type="button"
+                        class="voter-filter-btn active"
+                        data-filter="All"
+                        onclick="filterVoters('All', this)">
+                    All
+                    <span class="voter-filter-count" id="allTabCount">0</span>
+                </button>
+
+                <button type="button"
+                        class="voter-filter-btn"
+                        data-filter="Approved"
+                        onclick="filterVoters('Approved', this)">
+                    Approved
+                    <span class="voter-filter-count" id="approvedTabCount">0</span>
+                </button>
+
+                <button type="button"
+                        class="voter-filter-btn"
+                        data-filter="Pending"
+                        onclick="filterVoters('Pending', this)">
+                    Pending
+                    <span class="voter-filter-count" id="pendingTabCount">0</span>
+                </button>
+
+                <button type="button"
+                        class="voter-filter-btn"
+                        data-filter="Rejected"
+                        onclick="filterVoters('Rejected', this)">
+                    Rejected
+                    <span class="voter-filter-count" id="rejectedTabCount">0</span>
+                </button>
+
+            </div>
+
+
+            <div id="message" class="message" aria-live="polite">
+                Loading voters...
+            </div>
+
+
+            <div class="table-container voter-table-container">
+                <table class="voter-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Enrolment No.</th>
+                            <th>Mobile</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                            <th>Rejection Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="votersTableBody"></tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+            © VoteRight — Secure Online Voting System
+        </footer>
+
+    </main>
+
+
+    <script>
+
+    // ==========================================
+    // ADMIN AUTHENTICATION
+    // ==========================================
+
+    const token = localStorage.getItem("vr_token");
+    const savedUser = localStorage.getItem("vr_user");
 
     try {
-        const response = await fetch("/api/voters/", {
-            headers: { "Authorization": "Bearer " + token }
+        const user = JSON.parse(savedUser || "null");
+
+        if (!token || !user || user.role !== "admin") {
+            window.location.href = "../index.html";
+        }
+    } catch (error) {
+        window.location.href = "../index.html";
+    }
+
+
+    function logout() {
+        localStorage.removeItem("vr_token");
+        localStorage.removeItem("vr_user");
+        window.location.href = "../index.html";
+    }
+
+
+    // ==========================================
+    // GLOBAL VOTER DATA
+    // ==========================================
+
+    let allVoters = [];
+    let currentFilter = "All";
+
+
+    // ==========================================
+    // SAFE HTML
+    // ==========================================
+
+    function escapeHTML(value) {
+        const div = document.createElement("div");
+        div.textContent = value == null ? "" : String(value);
+        return div.innerHTML;
+    }
+
+
+    // ==========================================
+    // NORMALIZE STATUS
+    // ==========================================
+
+    function normalizeStatus(status) {
+        const value = String(status || "").trim().toLowerCase();
+
+        if (value === "approved") return "Approved";
+        if (value === "pending") return "Pending";
+        if (value === "rejected") return "Rejected";
+
+        return "Unknown";
+    }
+
+
+    // ==========================================
+    // UPDATE SUMMARY COUNTS
+    // ==========================================
+
+    function updateVoterCounts() {
+
+        const total = allVoters.length;
+
+        const approved = allVoters.filter(
+            voter => normalizeStatus(voter.status) === "Approved"
+        ).length;
+
+        const pending = allVoters.filter(
+            voter => normalizeStatus(voter.status) === "Pending"
+        ).length;
+
+        const rejected = allVoters.filter(
+            voter => normalizeStatus(voter.status) === "Rejected"
+        ).length;
+
+
+        document.getElementById("totalVoters").textContent = total;
+        document.getElementById("approvedVoters").textContent = approved;
+        document.getElementById("pendingVoters").textContent = pending;
+        document.getElementById("rejectedVoters").textContent = rejected;
+
+        document.getElementById("allTabCount").textContent = total;
+        document.getElementById("approvedTabCount").textContent = approved;
+        document.getElementById("pendingTabCount").textContent = pending;
+        document.getElementById("rejectedTabCount").textContent = rejected;
+    }
+
+
+    // ==========================================
+    // LOAD VOTERS
+    // ==========================================
+
+    async function loadVoters() {
+
+        const message = document.getElementById("message");
+        const tableBody = document.getElementById("votersTableBody");
+
+        message.textContent = "Loading voters...";
+        tableBody.replaceChildren();
+
+        try {
+
+            const response = await fetch("/api/voters/", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.status === 401 || response.status === 403) {
+                alert("Admin session expired or access denied. Please log in again.");
+                logout();
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(data.message || "Could not load voters.");
+            }
+
+            allVoters = Array.isArray(data.voters) ? data.voters : [];
+
+            updateVoterCounts();
+            renderVoters();
+
+        } catch (error) {
+
+            console.error("Load voters error:", error);
+            message.textContent = error.message || "Unable to load voters.";
+
+        }
+    }
+
+
+    // ==========================================
+    // FILTER VOTERS
+    // ==========================================
+
+    function filterVoters(filter, button) {
+
+        currentFilter = filter;
+
+        document.querySelectorAll(".voter-filter-btn").forEach(btn => {
+            btn.classList.remove("active");
         });
 
-        const data = await response.json();
-
-        if (response.status === 401 || response.status === 403) {
-            alert("Admin session expired or access denied. Please log in again.");
-            logout();
-            return;
+        if (button) {
+            button.classList.add("active");
         }
 
-        if (!response.ok) {
-            throw new Error(data.message || "Could not load voters.");
-        }
+        renderVoters();
+    }
 
-        const voters = data.voters || [];
 
-        if (!voters.length) {
-            tableBody.innerHTML =
-                '<tr><td colspan="7" style="text-align:center;">No registered voters found.</td></tr>';
-            message.textContent = "No voters registered yet.";
-            return;
-        }
+    // ==========================================
+    // RENDER VOTER TABLE
+    // ==========================================
 
-        message.textContent = `${voters.length} voter(s) found.`;
+    function renderVoters() {
 
-        voters.forEach(voter => {
+        const tableBody = document.getElementById("votersTableBody");
+        const message = document.getElementById("message");
+        const search = document.getElementById("voterSearch").value
+            .trim()
+            .toLowerCase();
+
+        tableBody.replaceChildren();
+
+        let filteredVoters = allVoters.filter(voter => {
+
+            const matchesStatus =
+                currentFilter === "All" ||
+                normalizeStatus(voter.status) === currentFilter;
+
+            const searchableText = [
+                voter.name,
+                voter.email,
+                voter.enrolment_no,
+                voter.mobile,
+                voter.department,
+                voter.year,
+                voter.status,
+                voter.rejection_reason
+            ].join(" ").toLowerCase();
+
+            return matchesStatus && searchableText.includes(search);
+        });
+
+
+        if (!filteredVoters.length) {
+
             const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td colspan="9" class="table-empty">
+                    No ${currentFilter === "All" ? "" : currentFilter.toLowerCase() + " "}
+                    voters found.
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+
+            message.textContent = "No matching voters found.";
+            return;
+        }
+
+
+        message.textContent =
+            `${filteredVoters.length} ${currentFilter === "All" ? "" : currentFilter.toLowerCase() + " "}voter(s) found.`;
+
+
+        filteredVoters.forEach(voter => {
+
+            const row = document.createElement("tr");
+
+            const voterId = Number(voter.id);
+            const status = normalizeStatus(voter.status);
+
             let actions = "";
 
-            if (voter.status === "Pending") {
+
+            if (status === "Pending") {
+
                 actions = `
                     <button type="button" class="btn-primary"
-                        onclick="changeStatus(${Number(voter.id)}, 'Approved')">Approve</button>
-                    <button type="button"
-                        onclick="changeStatus(${Number(voter.id)}, 'Rejected')">Reject</button>`;
-            } else if (voter.status === "Approved") {
+                        onclick="changeStatus(${voterId}, 'Approved')">
+                        Approve
+                    </button>
+
+                    <button type="button" class="btn-danger"
+                        onclick="changeStatus(${voterId}, 'Rejected')">
+                        Reject
+                    </button>
+
+                    <button type="button" class="btn-danger"
+                        onclick="deleteVoter(${voterId})">
+                        Delete
+                    </button>`;
+
+            } else if (status === "Approved") {
+
                 actions = `
-                    <button type="button"
-                        onclick="changeStatus(${Number(voter.id)}, 'Rejected')">Reject</button>
-                    <button type="button"
-                        onclick="deleteVoter(${Number(voter.id)})">Delete</button>`;
+                    <button type="button" class="btn-danger"
+                        onclick="changeStatus(${voterId}, 'Rejected')">
+                        Reject
+                    </button>
+
+                    <button type="button" class="btn-danger"
+                        onclick="deleteVoter(${voterId})">
+                        Delete
+                    </button>`;
+
+            } else if (status === "Rejected") {
+
+                actions = `
+                    <button type="button" class="btn-primary"
+                        onclick="changeStatus(${voterId}, 'Approved')">
+                        Approve
+                    </button>
+
+                    <button type="button" class="btn-danger"
+                        onclick="deleteVoter(${voterId})">
+                        Delete
+                    </button>`;
+
             } else {
+
                 actions = `
-                    <button type="button" class="btn-primary"
-                        onclick="changeStatus(${Number(voter.id)}, 'Approved')">Approve</button>
-                    <button type="button"
-                        onclick="deleteVoter(${Number(voter.id)})">Delete</button>`;
+                    <button type="button" class="btn-danger"
+                        onclick="deleteVoter(${voterId})">
+                        Delete
+                    </button>`;
             }
+
 
             row.innerHTML = `
                 <td>${escapeHTML(voter.name || "-")}</td>
+
                 <td>${escapeHTML(voter.email || "-")}</td>
-                <td>${escapeHTML(voter.roll_no || "-")}</td>
+
+                <td>${escapeHTML(voter.enrolment_no || "-")}</td>
+
+                <td>${escapeHTML(voter.mobile || "-")}</td>
+
                 <td>${escapeHTML(voter.department || "-")}</td>
+
                 <td>${escapeHTML(voter.year || "-")}</td>
-                <td><strong>${escapeHTML(voter.status || "-")}</strong></td>
-                <td>${actions}</td>`;
+
+                <td>
+                    <span class="voter-status-badge ${status.toLowerCase()}">
+                        ${escapeHTML(status)}
+                    </span>
+                </td>
+
+                <td>${escapeHTML(voter.rejection_reason || "-")}</td>
+
+                <td>
+                    <div class="voter-action-buttons">
+                        ${actions}
+                    </div>
+                </td>
+            `;
 
             tableBody.appendChild(row);
+
         });
-    } catch (error) {
-        console.error("Load voters error:", error);
-        message.textContent = error.message || "Unable to load voters.";
-    }
-}
-
-async function changeStatus(voterId, status) {
-    let rejectionReason = null;
-
-    if (status === "Rejected") {
-        rejectionReason = prompt(
-            "Enter the reason for rejecting this registration:"
-        );
-
-        if (rejectionReason === null) return;
-
-        rejectionReason = rejectionReason.trim();
-
-        if (!rejectionReason) {
-            alert("Please enter a rejection reason.");
-            return;
-        }
     }
 
-    const confirmation = status === "Rejected"
-        ? `Reject this voter?\n\nReason: ${rejectionReason}`
-        : `Approve this voter?`;
 
-    if (!confirm(confirmation)) return;
+    // ==========================================
+    // CHANGE VOTER STATUS
+    // ==========================================
 
-    try {
-        const response = await fetch(
-            `/api/admin/voters/${voterId}/status`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({
-                    status: status,
-                    rejection_reason: rejectionReason
-                })
+    async function changeStatus(voterId, status) {
+
+        let rejectionReason = null;
+
+        if (status === "Rejected") {
+
+            rejectionReason = prompt(
+                "Enter the reason for rejecting this registration:"
+            );
+
+            if (rejectionReason === null) return;
+
+            rejectionReason = rejectionReason.trim();
+
+            if (!rejectionReason) {
+                alert("Please enter a rejection reason.");
+                return;
             }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Status update failed.");
         }
 
-        alert(data.message || "Voter status updated.");
-        await loadVoters();
-    } catch (error) {
-        console.error("Status update error:", error);
-        alert(error.message || "Unable to update voter status.");
-    }
-}
+        const confirmation = status === "Rejected"
+            ? `Reject this voter?\n\nReason: ${rejectionReason}`
+            : `Approve this voter?`;
 
-async function deleteVoter(voterId) {
-    if (!confirm("Are you sure you want to delete this voter?")) return;
+        if (!confirm(confirmation)) return;
 
-    try {
-        const response = await fetch(
-            `/api/admin/voters/${voterId}`,
-            {
-                method: "DELETE",
-                headers: { "Authorization": "Bearer " + token }
+        try {
+
+            const response = await fetch(
+                `/api/admin/voters/${voterId}/status`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+
+                    body: JSON.stringify({
+                        status: status,
+                        rejection_reason: rejectionReason
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Status update failed.");
             }
-        );
 
-        const data = await response.json();
+            alert(data.message || "Voter status updated.");
 
-        if (!response.ok) {
-            throw new Error(data.message || "Could not delete voter.");
+            await loadVoters();
+
+        } catch (error) {
+
+            console.error("Status update error:", error);
+            alert(error.message || "Unable to update voter status.");
+
         }
-
-        alert(data.message || "Voter deleted.");
-        await loadVoters();
-    } catch (error) {
-        console.error("Delete voter error:", error);
-        alert(error.message || "Could not delete voter.");
     }
-}
 
-loadVoters();
-</script>
+
+    // ==========================================
+    // DELETE VOTER
+    // ==========================================
+
+    async function deleteVoter(voterId) {
+
+        if (!confirm("Are you sure you want to delete this voter?")) return;
+
+        try {
+
+            const response = await fetch(
+                `/api/admin/voters/${voterId}`,
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Could not delete voter.");
+            }
+
+            alert(data.message || "Voter deleted.");
+
+            await loadVoters();
+
+        } catch (error) {
+
+            console.error("Delete voter error:", error);
+            alert(error.message || "Could not delete voter.");
+
+        }
+    }
+
+
+    // ==========================================
+    // VOTER SEARCH
+    // ==========================================
+
+    document.getElementById("voterSearch").addEventListener(
+        "input",
+        renderVoters
+    );
+
+
+    // ==========================================
+    // INITIAL LOAD
+    // ==========================================
+
+    loadVoters();
+
+    </script>
+
 </body>
 </html>
