@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,164 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoteRight - Registration</title>
     <link rel="stylesheet" href="css/style.css">
-
-    <style>
-        .receipt-container {
-            display: none;
-            width: 100%;
-            max-width: 750px;
-            margin: 30px auto;
-            padding: 25px;
-        }
-
-        .receipt {
-            background: #fff;
-            border: 2px solid #6258c9;
-            border-radius: 12px;
-            padding: 35px;
-            color: #222;
-        }
-
-        .receipt-header {
-            text-align: center;
-            border-bottom: 2px solid #6258c9;
-            padding-bottom: 20px;
-            margin-bottom: 22px;
-        }
-
-        .receipt-header h1 {
-            color: #40369b;
-            margin-bottom: 5px;
-        }
-
-        .receipt-header p {
-            color: #666;
-        }
-
-        .receipt-title {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #29234f;
-        }
-
-        .receipt-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .receipt-item {
-            border-bottom: 1px solid #ddd;
-            padding: 8px 0;
-            overflow-wrap: anywhere;
-        }
-
-        .receipt-item small {
-            display: block;
-            color: #777;
-            margin-bottom: 5px;
-        }
-
-        .receipt-item strong {
-            font-size: 15px;
-        }
-
-        .receipt-status {
-            margin-top: 25px;
-            padding: 14px;
-            background: #fff4d6;
-            color: #805900;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .receipt-note {
-            margin-top: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #555;
-        }
-
-        .receipt-actions {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 22px;
-        }
-
-        .receipt-actions button,
-        .receipt-actions a {
-            border: none;
-            padding: 12px 22px;
-            border-radius: 7px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .print-btn {
-            background: #6258c9;
-            color: white;
-        }
-
-        .login-btn {
-            background: #eee;
-            color: #333;
-        }
-
-        @media (max-width: 600px) {
-            .receipt-container {
-                padding: 12px;
-            }
-
-            .receipt {
-                padding: 20px;
-            }
-
-            .receipt-details {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-        }
-
-        @media print {
-            body {
-                background: white !important;
-            }
-
-            .auth-container,
-            .receipt-actions {
-                display: none !important;
-            }
-
-            .receipt-container {
-                display: block !important;
-                max-width: none;
-                margin: 0;
-                padding: 0;
-            }
-
-            .receipt {
-                border: 2px solid #333;
-                border-radius: 0;
-                box-shadow: none;
-                padding: 25px;
-            }
-
-            @page {
-                size: A4;
-                margin: 15mm;
-            }
-        }
-    </style>
 </head>
 
-<body>
+<body class="register-page">
 
-    <!-- Registration Form -->
     <div class="auth-container" id="registrationSection">
         <div class="auth-card">
 
@@ -176,94 +23,129 @@
 
             <form id="registerForm">
 
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        placeholder="Enter your full name"
-                        required
-                    >
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" maxlength="150"
+                            placeholder="Enter your full name"
+                            autocomplete="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" maxlength="150"
+                            placeholder="Enter your email"
+                            autocomplete="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="enrolment_no">Enrolment Number</label>
+                        <input type="text" id="enrolment_no"
+                            placeholder="Example: ECCU2441001"
+                            pattern="ECCU[0-9]{7,9}"
+                            title="Enter ECCU followed by 7 to 9 digits"
+                            maxlength="13"
+                            style="text-transform: uppercase;" required>
+                        <small>Format: ECCU followed by 7–9 digits</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="tel" id="mobile"
+                            placeholder="Enter 10 digit mobile number"
+                            inputmode="numeric" pattern="[0-9]{10}"
+                            maxlength="10" minlength="10" required>
+                        <small>Enter exactly 10 digits</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" required>
+                            <option value="">Select Department</option>
+                            <option value="BA">BA</option>
+                            <option value="BSC">BSC</option>
+                            <option value="BCOM">BCOM</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BVOC">BVOC</option>
+                            <option value="BED">BED</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="year">Year</label>
+                        <select id="year" required>
+                            <option value="">Select Year</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password"
+                            placeholder="Create a password"
+                            minlength="8"
+                            autocomplete="new-password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword"
+                            placeholder="Confirm your password"
+                            minlength="8"
+                            autocomplete="new-password" required>
+                    </div>
+
+                    <!-- SECURITY QUESTION -->
+
+                    <div class="form-group">
+                        <label for="security_question">
+                            Security Question
+                        </label>
+
+                        <select id="security_question" required>
+                            <option value="">Select Security Question</option>
+                            <option value="Which historical personality inspires you?">
+                                Which historical personality inspires you?
+                            </option>
+                            <option value="Who is your best friend?">
+                                Who is your best friend?
+                            </option>
+                        </select>
+                        <small>
+                            This question will help you recover your password.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="security_answer">
+                            Security Answer
+                        </label>
+
+                        <input
+                            type="text"
+                            id="security_answer"
+                            maxlength="150"
+                            placeholder="Enter your security answer"
+                            autocomplete="off"
+                            required
+                        >
+                        <small>
+                            Remember your answer. You will need it when resetting your password.
+                        </small>
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="Enter your email"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="roll_no">Roll Number</label>
-                    <input
-                        type="text"
-                        id="roll_no"
-                        placeholder="Enter your roll number"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="mobile">Mobile Number</label>
-                    <input
-                        type="tel"
-                        id="mobile"
-                        placeholder="Enter your mobile number"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="department">Department</label>
-                    <input
-                        type="text"
-                        id="department"
-                        placeholder="Example: BCA"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="year">Year</label>
-                    <select id="year">
-                        <option value="">Select Year</option>
-                        <option value="1st Year">1st Year</option>
-                        <option value="2nd Year">2nd Year</option>
-                        <option value="3rd Year">3rd Year</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Create a password"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Confirm your password"
-                        required
-                    >
-                </div>
-
-                <button
-                    type="submit"
-                    class="btn-primary"
-                    id="registerBtn"
-                >
+                <button type="submit" class="btn-primary" id="registerBtn">
                     Register
                 </button>
+
             </form>
 
-            <div id="message" role="status"></div>
+            <div id="message" role="status" aria-live="polite"></div>
 
             <div class="register-link">
                 Already have an account?
@@ -274,7 +156,8 @@
     </div>
 
 
-    <!-- Printable Registration Receipt -->
+    <!-- PRINTABLE REGISTRATION RECEIPT -->
+
     <div class="receipt-container" id="receiptSection">
 
         <div class="receipt">
@@ -306,8 +189,8 @@
                 </div>
 
                 <div class="receipt-item">
-                    <small>Roll Number</small>
-                    <strong id="receiptRoll"></strong>
+                    <small>Enrolment Number</small>
+                    <strong id="receiptEnrolment"></strong>
                 </div>
 
                 <div class="receipt-item">
@@ -332,27 +215,15 @@
 
             </div>
 
-            <div class="receipt-status">
-                Registration Status: Pending Admin Approval
-            </div>
-
-            <p class="receipt-note">
-                Your registration has been submitted successfully.
-                Please keep this receipt for your records.
-                You can log in after your voter registration
-                has been approved by the administrator.
-                This receipt confirms submission, not approval.
-            </p>
+            <div class="receipt-status" id="receiptStatus"></div>
+            <p class="receipt-note" id="receiptNote"></p>
 
         </div>
 
         <div class="receipt-actions">
 
-            <button
-                class="print-btn"
-                type="button"
-                onclick="window.print()"
-            >
+            <button class="print-btn" type="button"
+                onclick="window.print()">
                 Print / Save as PDF
             </button>
 
@@ -361,191 +232,252 @@
             </a>
 
         </div>
+
     </div>
 
 
     <script>
-        const registerForm =
-            document.getElementById("registerForm");
 
-        const message =
-            document.getElementById("message");
+        const registerForm = document.getElementById("registerForm");
+        const message = document.getElementById("message");
+        const registerBtn = document.getElementById("registerBtn");
 
-        const registerBtn =
-            document.getElementById("registerBtn");
+        const enrolmentInput = document.getElementById("enrolment_no");
+        const mobileInput = document.getElementById("mobile");
 
-
-        // Fill receipt fields safely
         function setReceiptValue(id, value) {
             document.getElementById(id).textContent =
                 value || "Not provided";
         }
 
-
-        // Show receipt using backend application reference
-        function showReceipt(details, applicationRef) {
+        function showReceipt(details, applicationRef, status) {
 
             const now = new Date();
 
-            setReceiptValue(
-                "receiptRef",
-                applicationRef
-            );
+            setReceiptValue("receiptRef", applicationRef);
+            setReceiptValue("receiptDate", now.toLocaleString());
+            setReceiptValue("receiptName", details.name);
+            setReceiptValue("receiptEnrolment", details.enrolment_no);
+            setReceiptValue("receiptEmail", details.email);
+            setReceiptValue("receiptMobile", details.mobile);
+            setReceiptValue("receiptDepartment", details.department);
+            setReceiptValue("receiptYear", details.year);
 
-            setReceiptValue(
-                "receiptDate",
-                now.toLocaleString()
-            );
+            const statusElement =
+                document.getElementById("receiptStatus");
 
-            setReceiptValue(
-                "receiptName",
-                details.name
-            );
+            const noteElement =
+                document.getElementById("receiptNote");
 
-            setReceiptValue(
-                "receiptRoll",
-                details.roll_no
-            );
+            if (status === "Approved") {
 
-            setReceiptValue(
-                "receiptEmail",
-                details.email
-            );
+                statusElement.textContent =
+                    "Registration Status: Approved";
 
-            setReceiptValue(
-                "receiptMobile",
-                details.mobile
-            );
+                statusElement.style.color = "#228b55";
 
-            setReceiptValue(
-                "receiptDepartment",
-                details.department
-            );
+                noteElement.textContent =
+                    "Your student details matched the eligible student database. Your voter registration has been approved. Please keep this receipt for your records.";
 
-            setReceiptValue(
-                "receiptYear",
-                details.year
-            );
+            } else {
 
-            document.getElementById(
-                "registrationSection"
-            ).style.display = "none";
+                statusElement.textContent =
+                    "Registration Status: Pending Admin Approval";
 
-            document.getElementById(
-                "receiptSection"
-            ).style.display = "block";
+                statusElement.style.color = "#b7791f";
+
+                noteElement.textContent =
+                    "Your registration has been submitted successfully but your details did not match the eligible student database. Please wait for the administrator to review your application. You can log in after approval.";
+            }
+
+            document.getElementById("registrationSection").style.display =
+                "none";
+
+            document.getElementById("receiptSection").style.display =
+                "block";
 
             window.scrollTo(0, 0);
         }
 
 
-        // Handle registration
-        registerForm.addEventListener(
-            "submit",
-            async function(event) {
+        // ENROLMENT VALIDATION
 
-                event.preventDefault();
-
-                const details = {
-                    name: document.getElementById("name").value.trim(),
-                    email: document.getElementById("email").value.trim(),
-                    roll_no: document.getElementById("roll_no").value.trim(),
-                    mobile: document.getElementById("mobile").value.trim(),
-                    department: document.getElementById("department").value.trim(),
-                    year: document.getElementById("year").value
-                };
-
-                const password =
-                    document.getElementById("password").value;
-
-                const confirmPassword =
-                    document.getElementById("confirmPassword").value;
+        enrolmentInput.addEventListener("input", function() {
+            this.value = this.value.toUpperCase();
+        });
 
 
-                // Check passwords
-                if (password !== confirmPassword) {
+        // MOBILE VALIDATION
 
-                    message.textContent =
-                        "Passwords do not match.";
+        mobileInput.addEventListener("input", function() {
+            this.value = this.value.replace(/\D/g, "").slice(0, 10);
+        });
 
-                    message.style.color = "red";
 
-                    return;
-                }
+        // REGISTRATION SUBMISSION
 
+        registerForm.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            message.textContent = "";
+            message.style.color = "#e7a09a";
+
+            const details = {
+
+                name: document.getElementById("name").value.trim(),
+
+                email: document.getElementById("email").value.trim().toLowerCase(),
+
+                enrolment_no: enrolmentInput.value.trim().toUpperCase(),
+
+                mobile: mobileInput.value.trim(),
+
+                department: document.getElementById("department").value,
+
+                year: document.getElementById("year").value
+
+            };
+
+            const password =
+                document.getElementById("password").value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+            const securityQuestion =
+                document.getElementById("security_question").value;
+
+            const securityAnswer =
+                document.getElementById("security_answer").value.trim();
+
+
+            if (!/^ECCU\d{7,9}$/.test(details.enrolment_no)) {
 
                 message.textContent =
-                    "Creating account...";
+                    "Invalid Enrolment Number. Use ECCU followed by 7 to 9 digits.";
 
-                message.style.color = "#555";
-
-                registerBtn.disabled = true;
-
-
-                try {
-
-                    const response = await fetch(
-                        "/api/auth/register",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                ...details,
-                                password: password
-                            })
-                        }
-                    );
-
-
-                    const data = await response.json();
-
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            data.message ||
-                            "Registration failed"
-                        );
-                    }
-
-
-                    // Ensure backend sent the reference
-                    if (!data.application_ref) {
-
-                        throw new Error(
-                            "Registration succeeded, but application reference was not received. Please contact the administrator."
-                        );
-                    }
-
-
-                    // Display receipt
-                    showReceipt(
-                        details,
-                        data.application_ref
-                    );
-
-
-                } catch (error) {
-
-                    console.error(
-                        "Registration error:",
-                        error
-                    );
-
-                    message.textContent =
-                        error.message ||
-                        "Something went wrong.";
-
-                    message.style.color = "red";
-
-                    registerBtn.disabled = false;
-                }
+                return;
             }
-        );
+
+            if (!/^\d{10}$/.test(details.mobile)) {
+
+                message.textContent =
+                    "Mobile number must contain exactly 10 digits.";
+
+                return;
+            }
+
+            const emailPattern =
+                /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+            if (!emailPattern.test(details.email)) {
+
+                message.textContent =
+                    "Please enter a valid email address.";
+
+                return;
+            }
+
+            if (password.length < 8) {
+
+                message.textContent =
+                    "Password must contain at least 8 characters.";
+
+                return;
+            }
+
+            if (password !== confirmPassword) {
+
+                message.textContent =
+                    "Password and Confirm Password do not match.";
+
+                return;
+            }
+
+            if (!securityQuestion || !securityAnswer) {
+
+                message.textContent =
+                    "Please select a security question and enter its answer.";
+
+                return;
+            }
+
+            if (securityAnswer.length < 2) {
+
+                message.textContent =
+                    "Security answer must contain at least 2 characters.";
+
+                return;
+            }
+
+
+            message.textContent = "Creating your account...";
+            message.style.color = "#f2e7ce";
+
+            registerBtn.disabled = true;
+
+            try {
+
+                const response = await fetch("/api/auth/register", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        ...details,
+
+                        password: password,
+
+                        confirm_password: confirmPassword,
+
+                        security_question: securityQuestion,
+
+                        security_answer: securityAnswer
+
+                    })
+
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.message || "Registration failed."
+                    );
+                }
+
+                if (!data.application_ref || !data.status) {
+                    throw new Error(
+                        "Registration response is incomplete. Please contact the administrator."
+                    );
+                }
+
+                showReceipt(
+                    details,
+                    data.application_ref,
+                    data.status
+                );
+
+            } catch (error) {
+
+                console.error("Registration error:", error);
+
+                message.textContent =
+                    error.message || "Something went wrong.";
+
+                message.style.color = "#e7a09a";
+
+                registerBtn.disabled = false;
+
+            }
+
+        });
+
     </script>
 
 </body>

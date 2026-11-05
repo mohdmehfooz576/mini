@@ -36,76 +36,78 @@ def dashboard_stats():
 
     cursor = connection.cursor(dictionary=True)
 
-    stats = {}
+    try:
+        stats = {}
 
-    # Total voters
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM voters
-    """)
-    stats["total_voters"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM voters
+        """)
+        stats["total_voters"] = cursor.fetchone()["total"]
 
-    # Approved voters
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM voters
-        WHERE status = 'Approved'
-    """)
-    stats["approved_voters"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM voters
+            WHERE status = 'Approved'
+        """)
+        stats["approved_voters"] = cursor.fetchone()["total"]
 
-    # Pending voters
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM voters
-        WHERE status = 'Pending'
-    """)
-    stats["pending_voters"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM voters
+            WHERE status = 'Pending'
+        """)
+        stats["pending_voters"] = cursor.fetchone()["total"]
 
-    # Rejected voters
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM voters
-        WHERE status = 'Rejected'
-    """)
-    stats["rejected_voters"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM voters
+            WHERE status = 'Rejected'
+        """)
+        stats["rejected_voters"] = cursor.fetchone()["total"]
 
-    # Total elections
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM elections
-    """)
-    stats["total_elections"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM elections
+        """)
+        stats["total_elections"] = cursor.fetchone()["total"]
 
-    # Active elections
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM elections
-        WHERE status = 'Active'
-    """)
-    stats["active_elections"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM elections
+            WHERE status = 'Active'
+        """)
+        stats["active_elections"] = cursor.fetchone()["total"]
 
-    # Stopped elections
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM elections
-        WHERE status = 'Stopped'
-    """)
-    stats["stopped_elections"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM elections
+            WHERE status = 'Stopped'
+        """)
+        stats["stopped_elections"] = cursor.fetchone()["total"]
 
-    # Total votes
-    cursor.execute("""
-        SELECT COUNT(*) AS total
-        FROM votes
-    """)
-    stats["total_votes"] = cursor.fetchone()["total"]
+        cursor.execute("""
+            SELECT COUNT(*) AS total
+            FROM votes
+        """)
+        stats["total_votes"] = cursor.fetchone()["total"]
 
-    cursor.close()
-    connection.close()
+        return jsonify({
+            "success": True,
+            "stats": stats
+        }), 200
 
-    return jsonify({
-        "success": True,
-        "stats": stats
-    }), 200
+    except Exception as error:
+        print("Dashboard stats error:", error)
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to load dashboard statistics"
+        }), 500
+
+    finally:
+        cursor.close()
+        connection.close()
 
 
 # ==========================================
@@ -136,8 +138,8 @@ def change_voter_status(voter_id):
             "message": "Invalid voter status"
         }), 400
 
-    # A rejection reason is required when rejecting a form.
     if status == "Rejected":
+
         if not isinstance(rejection_reason, str):
             return jsonify({
                 "success": False,
@@ -153,7 +155,6 @@ def change_voter_status(voter_id):
             }), 400
 
     else:
-        # The model clears the old reason for Approved/Pending.
         rejection_reason = None
 
     changed = update_voter_status(
@@ -165,9 +166,7 @@ def change_voter_status(voter_id):
     if not changed:
         return jsonify({
             "success": False,
-            "message": (
-                "Voter not found or status could not be updated"
-            )
+            "message": "Voter not found or status could not be updated"
         }), 404
 
     response = {
@@ -183,7 +182,7 @@ def change_voter_status(voter_id):
 
 
 # ==========================================
-# DELETE VOTER
+# DELETE VOTER - PROTECT CAST VOTES
 # ==========================================
 
 @admin_routes.route(
@@ -193,13 +192,75 @@ def change_voter_status(voter_id):
 @admin_required
 def remove_voter(voter_id):
 
+    connection = get_connection()
+
+    if not connection:
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    cursor = connection.cursor()
+
+    try:
+        # Check whether voter exists.
+        cursor.execute("""
+            SELECT id
+            FROM voters
+            WHERE id = %s
+        """, (voter_id,))
+
+        voter = cursor.fetchone()
+
+        if not voter:
+            return jsonify({
+                "success": False,
+                "message": "Voter not found"
+            }), 404
+
+        # Check whether voter has already cast a vote.
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM votes
+            WHERE voter_id = %s
+        """, (voter_id,))
+
+        vote_count = cursor.fetchone()[0]
+
+        if vote_count > 0:
+            return jsonify({
+                "success": False,
+                "message": (
+                    "This voter has already voted and "
+                    "cannot be deleted. Voting records "
+                    "and receipts are protected."
+                ),
+                "votes_found": vote_count
+            }), 409
+
+    except Exception as error:
+        print("Voter deletion check error:", error)
+
+        return jsonify({
+            "success": False,
+            "message": "Unable to verify voter voting records"
+        }), 500
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    # Model performs its own vote-protection check as well.
     deleted = delete_voter(voter_id)
 
     if not deleted:
         return jsonify({
             "success": False,
-            "message": "Voter not found"
-        }), 404
+            "message": (
+                "Voter could not be deleted. "
+                "The voter may have a protected voting record."
+            )
+        }), 409
 
     return jsonify({
         "success": True,

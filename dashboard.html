@@ -1,493 +1,923 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>VoteRight - Dashboard</title>
 
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        .profile-heading-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .profile-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 20px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #ffe58a, #d6a832);
+    color: #17130a;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(214, 168, 50, 0.18);
+    transition: all 0.25s ease;
+}
+
+.profile-edit-btn:hover {
+    background: linear-gradient(135deg, #ffedaa, #e5b943);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(214, 168, 50, 0.3);
+}
+
+        .profile-edit-btn:hover {
+            background: #dfbd7a;
+        }
+
+        .profile-edit-form {
+            display: none;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .profile-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .profile-form-group label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .profile-form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px 12px;
+            border: 1px solid rgba(201, 164, 92, 0.4);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: inherit;
+            font: inherit;
+            outline: none;
+        }
+
+        .profile-form-group input:focus {
+            border-color: #c9a45c;
+        }
+
+        .profile-form-group input:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .profile-readonly-note {
+            grid-column: 1 / -1;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .profile-form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .profile-cancel-btn {
+            border: 1px solid rgba(201, 164, 92, 0.5);
+            background: transparent;
+            color: inherit;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .profile-save-btn {
+            border: 1px solid #c9a45c;
+            background: #c9a45c;
+            color: #17130c;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font: inherit;
+        }
+
+        .profile-save-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        @media (max-width: 600px) {
+            .profile-edit-form {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-readonly-note,
+            .profile-form-actions {
+                grid-column: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- =========================
-         NAVBAR
-    ========================== -->
-
-    <header class="topbar">
-
+    <!-- LEFT SIDEBAR -->
+    <aside class="topbar">
         <div class="brand">
             <div class="logo-icon">✓</div>
             <span>VoteRight</span>
         </div>
 
         <nav>
+            <a href="dashboard.html" class="active"><span>⌂</span> Dashboard</a>
+            <a href="elections.html"><span>▣</span> Elections</a>
+            <a href="my-votes.html"><span>✓</span> My Votes</a>
+            <a href="results.html"><span>▥</span> Results</a>
+            <a href="change-password.html"><span>🔒</span> Change Password</a>
 
-            <a href="dashboard.html" class="active">
-                Dashboard
-            </a>
-
-            <a href="elections.html">
-                Elections
-            </a>
-
-            <a href="my-votes.html">
-                My Votes
-            </a>
-
-            <a href="results.html">
-                Results
-            </a>
-
-            <button
-                type="button"
-                onclick="logout()"
-                class="logout-btn"
-            >
-                Logout
+            <button type="button" onclick="logout()" class="logout-btn">
+                <span>↪</span> Logout
             </button>
-
         </nav>
 
-    </header>
+        <div class="sidebar-bottom">
+            <span>SECURE ONLINE VOTING</span>
+        </div>
+    </aside>
 
 
-    <!-- =========================
-         MAIN CONTENT
-    ========================== -->
-
+    <!-- MAIN -->
     <main class="dashboard-container">
 
-        <!-- Welcome -->
+        <!-- TOP BAR -->
+        <header class="dashboard-top">
+            <div class="mobile-menu-label">☰ &nbsp; VoteRight</div>
 
+            <label class="search-box">
+                <span>⌕</span>
+                <input
+                    type="search"
+                    id="dashboardSearch"
+                    placeholder="Search elections..."
+                    aria-label="Search elections"
+                >
+            </label>
+
+            <div class="top-actions">
+                <a href="elections.html" class="notification-button" title="Elections">
+                    ♧
+                </a>
+
+                <div class="top-profile">
+                    <span class="top-profile-icon">♙</span>
+                    <span id="topUserName">Voter</span>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- WELCOME BANNER -->
         <section class="welcome-section">
+            <div class="welcome-content">
+                <p class="small-text">WELCOME BACK,</p>
+                <h1 id="welcomeName">Loading...</h1>
+                <p>Your voice matters. Vote for a better tomorrow.</p>
+                <span class="welcome-date">✦ &nbsp; YOUR VOTER DASHBOARD</span>
+            </div>
 
-            <div>
+            <div class="welcome-decoration" aria-hidden="true">
+                <div class="gold-orbit"></div>
+                <div class="vote-illustration">
+                    <span class="vote-check">✓</span>
+                    <strong>VOTE</strong>
+                </div>
+            </div>
+        </section>
 
-                <p class="small-text">
-                    Welcome back
-                </p>
 
-                <h1 id="welcomeName">
-                    Loading...
-                </h1>
+        <!-- SUMMARY CARDS -->
+        <section class="stats-grid">
 
-                <p>
-                    Manage your voting activity
-                    from your dashboard.
-                </p>
+            <a href="elections.html" class="stat-card">
+                <div class="stat-icon">▣</div>
+                <div class="stat-info">
+                    <span>Explore</span>
+                    <strong>Elections</strong>
+                    <small>View available elections →</small>
+                </div>
+            </a>
 
+            <a href="my-votes.html" class="stat-card">
+                <div class="stat-icon">✓</div>
+                <div class="stat-info">
+                    <span>Your account</span>
+                    <strong>My Votes</strong>
+                    <small>View voting history →</small>
+                </div>
+            </a>
+
+            <a href="results.html" class="stat-card">
+                <div class="stat-icon">▥</div>
+                <div class="stat-info">
+                    <span>Election updates</span>
+                    <strong>Results</strong>
+                    <small>View election results →</small>
+                </div>
+            </a>
+
+            <a href="check-status.html" class="stat-card">
+                <div class="stat-icon">♙</div>
+                <div class="stat-info">
+                    <span>Voter account</span>
+                    <strong id="summaryStatus">Profile</strong>
+                    <small>Check voter details →</small>
+                </div>
+            </a>
+
+        </section>
+
+
+        <!-- MAIN DASHBOARD ROW -->
+        <section class="dashboard-main-grid">
+
+            <!-- UPCOMING ELECTIONS -->
+            <div class="dashboard-card upcoming-panel">
+
+                <div class="section-heading">
+                    <h2><span class="heading-icon">🏆</span> Available Elections</h2>
+                    <a href="elections.html" class="view-all">View All →</a>
+                </div>
+
+                <div id="electionMessage" class="message">
+                    Loading elections...
+                </div>
+
+                <div id="dashboardElections" class="dashboard-election-list"></div>
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+            <div class="dashboard-card quick-panel">
+
+                <div class="section-heading">
+                    <h2><span class="heading-icon">⚡</span> Quick Actions</h2>
+                </div>
+
+                <div class="quick-actions">
+
+                    <a href="elections.html" class="action-card">
+                        <div class="action-icon">🗳️</div>
+                        <h3>Cast Your Vote</h3>
+                        <p>Choose an election and vote.</p>
+                    </a>
+
+                    <a href="results.html" class="action-card">
+                        <div class="action-icon">▥</div>
+                        <h3>View Results</h3>
+                        <p>See election results.</p>
+                    </a>
+
+                    <a href="my-votes.html" class="action-card">
+                        <div class="action-icon">✓</div>
+                        <h3>My Votes</h3>
+                        <p>Check your voting history.</p>
+                    </a>
+
+                    <a href="check-status.html" class="action-card">
+                        <div class="action-icon">♙</div>
+                        <h3>Check Status</h3>
+                        <p>View your voter status.</p>
+                    </a>
+
+                    <a href="change-password.html" class="action-card">
+                        <div class="action-icon">🔒</div>
+                        <h3>Change Password</h3>
+                        <p>Update your account password securely.</p>
+                    </a>
+
+                </div>
             </div>
 
         </section>
 
 
-        <!-- =========================
-             PROFILE CARD
-        ========================== -->
+        <!-- LOWER ROW -->
+        <section class="dashboard-lower-grid">
 
-        <section class="dashboard-card">
+            <!-- PROFILE -->
+            <div class="dashboard-card profile-panel">
 
-            <div class="section-heading">
+                <div class="section-heading profile-heading-actions">
+                    <h2><span class="heading-icon">♙</span> My Profile</h2>
 
-                <h2>
-                    My Profile
-                </h2>
+                    <button
+                        type="button"
+                        class="profile-edit-btn"
+                        id="editProfileButton"
+                        onclick="openProfileEditor()">
+                        ✎ Edit Profile
+                    </button>
+                </div>
+
+                <div id="profileMessage" class="message">
+                    Loading profile...
+                </div>
+
+                <div id="profileData" class="profile-grid">
+
+                    <div class="profile-item">
+                        <span>Name</span>
+                        <strong id="profileName">-</strong>
+                    </div>
+
+                    <div class="profile-item">
+                        <span>Email</span>
+                        <strong id="profileEmail">-</strong>
+                    </div>
+
+                    <div class="profile-item">
+                        <span>Enrolment Number</span>
+                        <strong id="profileRoll">-</strong>
+                    </div>
+
+                    <div class="profile-item">
+                        <span>Mobile</span>
+                        <strong id="profileMobile">-</strong>
+                    </div>
+
+                    <div class="profile-item">
+                        <span>Department</span>
+                        <strong id="profileDepartment">-</strong>
+                    </div>
+
+                    <div class="profile-item">
+                        <span>Year</span>
+                        <strong id="profileYear">-</strong>
+                    </div>
+
+                    <div class="profile-item">
+                        <span>Voter Status</span>
+                        <strong id="profileStatus">-</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- PROFILE EDIT FORM -->
+
+                <form id="profileEditForm" class="profile-edit-form">
+
+                    <div class="profile-form-group">
+                        <label for="editName">Full Name</label>
+                        <input
+                            type="text"
+                            id="editName"
+                            maxlength="100"
+                            required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="editEmail">Email (Cannot be changed)</label>
+                        <input
+                            type="email"
+                            id="editEmail"
+                            disabled>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="editEnrolment">Enrolment Number</label>
+                        <input
+                            type="text"
+                            id="editEnrolment"
+                            maxlength="50"
+                            required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="editMobile">Mobile Number</label>
+                        <input
+                            type="tel"
+                            id="editMobile"
+                            maxlength="20"
+                            required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="editDepartment">Department</label>
+                        <input
+                            type="text"
+                            id="editDepartment"
+                            maxlength="100"
+                            required>
+                    </div>
+
+                    <div class="profile-form-group">
+                        <label for="editYear">Year</label>
+                        <input
+                            type="text"
+                            id="editYear"
+                            maxlength="30"
+                            required>
+                    </div>
+
+                    <p class="profile-readonly-note">
+                        Email and voter approval status cannot be changed from this form.
+                    </p>
+
+                    <div class="profile-form-actions">
+
+                        <button
+                            type="submit"
+                            class="profile-save-btn"
+                            id="saveProfileButton">
+                            Save Changes
+                        </button>
+
+                        <button
+                            type="button"
+                            class="profile-cancel-btn"
+                            onclick="closeProfileEditor()">
+                            Cancel
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
 
-            <div
-                id="profileMessage"
-                class="message"
-            >
-                Loading profile...
-            </div>
-
-
-            <div
-                id="profileData"
-                class="profile-grid"
-                style="display: none;"
-            >
-
-                <div class="profile-item">
-
-                    <span>Name</span>
-
-                    <strong id="profileName">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="profile-item">
-
-                    <span>Email</span>
-
-                    <strong id="profileEmail">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="profile-item">
-
-                    <span>Roll Number</span>
-
-                    <strong id="profileRoll">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="profile-item">
-
-                    <span>Department</span>
-
-                    <strong id="profileDepartment">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="profile-item">
-
-                    <span>Year</span>
-
-                    <strong id="profileYear">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="profile-item">
-
-                    <span>Voter Status</span>
-
-                    <strong id="profileStatus">
-                        -
-                    </strong>
-
-                </div>
-
+            <!-- QUOTE -->
+            <div class="dashboard-card quote-panel">
+                <div class="quote-mark">“</div>
+                <blockquote>
+                    Your Vote, Your Voice,
+                    <br>
+                    A Better Tomorrow.
+                </blockquote>
+                <span>— VoteRight</span>
+                <div class="quote-decoration">✦ ✦ ✦</div>
             </div>
 
         </section>
 
 
-        <!-- =========================
-             QUICK ACTIONS
-        ========================== -->
-
-        <section class="dashboard-card">
-
-            <div class="section-heading">
-
-                <h2>
-                    Quick Actions
-                </h2>
-
-            </div>
-
-
-            <div class="quick-actions">
-
-                <a
-                    href="elections.html"
-                    class="action-card"
-                >
-
-                    <div class="action-icon">
-                        🗳️
-                    </div>
-
-                    <h3>
-                        Elections
-                    </h3>
-
-                    <p>
-                        View available elections
-                        and cast your vote.
-                    </p>
-
-                </a>
-
-
-                <a
-                    href="my-votes.html"
-                    class="action-card"
-                >
-
-                    <div class="action-icon">
-                        📋
-                    </div>
-
-                    <h3>
-                        My Votes
-                    </h3>
-
-                    <p>
-                        View your voting history.
-                    </p>
-
-                </a>
-
-
-                <a
-                    href="results.html"
-                    class="action-card"
-                >
-
-                    <div class="action-icon">
-                        📊
-                    </div>
-
-                    <h3>
-                        Results
-                    </h3>
-
-                    <p>
-                        View election results.
-                    </p>
-
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             LOGOUT
-        ========================== -->
-
-        <div class="logout-area">
-
-            <button
-                type="button"
-                onclick="logout()"
-                class="btn-primary"
-            >
-                Logout
-            </button>
-
-        </div>
+        <footer class="dashboard-footer">
+            © VoteRight — Secure Online Voting System
+        </footer>
 
     </main>
 
 
     <script>
 
-        /*
-         * ==========================================
-         * CHECK LOGIN
-         * ==========================================
-         */
+        // ==========================================
+        // CHECK LOGIN
+        // ==========================================
 
-        const token =
-            localStorage.getItem(
-                "vr_token"
-            );
-
-        const savedUser =
-            localStorage.getItem(
-                "vr_user"
-            );
-
+        const token = localStorage.getItem("vr_token");
+        const savedUser = localStorage.getItem("vr_user");
 
         if (!token || !savedUser) {
-
-            window.location.href =
-                "index.html";
-
+            window.location.href = "index.html";
         }
 
 
-        /*
-         * ==========================================
-         * LOGOUT
-         * ==========================================
-         */
+        // ==========================================
+        // LOGOUT
+        // ==========================================
 
         function logout() {
 
-            localStorage.removeItem(
-                "vr_token"
-            );
+            localStorage.removeItem("vr_token");
+            localStorage.removeItem("vr_user");
 
-            localStorage.removeItem(
-                "vr_user"
-            );
-
-            window.location.href =
-                "index.html";
+            window.location.href = "index.html";
         }
 
 
-        /*
-         * ==========================================
-         * LOAD VOTER PROFILE
-         * ==========================================
-         */
+        // ==========================================
+        // PROFILE DATA
+        // ==========================================
+
+        let currentVoter = null;
+
+
+        // ==========================================
+        // LOAD VOTER PROFILE
+        // ==========================================
 
         async function loadProfile() {
 
             const profileMessage =
-                document.getElementById(
-                    "profileMessage"
-                );
+                document.getElementById("profileMessage");
 
             const profileData =
-                document.getElementById(
-                    "profileData"
-                );
-
+                document.getElementById("profileData");
 
             try {
 
-                const response =
-                    await fetch(
-                        "/api/voters/me",
-                        {
-                            method: "GET",
-
-                            headers: {
-                                "Authorization":
-                                    "Bearer " + token
-                            }
+                const response = await fetch(
+                    "/api/voters/me",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Authorization": "Bearer " + token
                         }
-                    );
+                    }
+                );
 
+                const data = await response.json();
 
-                const data =
-                    await response.json();
+                if (response.status === 401) {
 
-
-                /*
-                 * Token invalid / expired
-                 */
-
-                if (
-                    response.status === 401
-                ) {
-
-                    localStorage.removeItem(
-                        "vr_token"
-                    );
-
-                    localStorage.removeItem(
-                        "vr_user"
-                    );
-
-                    window.location.href =
-                        "index.html";
-
+                    logout();
                     return;
                 }
 
-
                 if (!response.ok) {
-
                     throw new Error(
-                        data.message ||
-                        "Could not load profile"
+                        data.message || "Could not load profile"
                     );
                 }
 
+                const voter = data.voter;
 
-                const voter =
-                    data.voter;
+                currentVoter = voter;
 
+                document.getElementById("welcomeName").textContent =
+                    "Hello, " + (voter.name || "Voter");
 
-                /*
-                 * Welcome name
-                 */
+                document.getElementById("topUserName").textContent =
+                    voter.name || "Voter";
 
-                document.getElementById(
-                    "welcomeName"
-                ).textContent =
-                    "Hello, " +
-                    voter.name;
-
-
-                /*
-                 * Profile fields
-                 */
-
-                document.getElementById(
-                    "profileName"
-                ).textContent =
+                document.getElementById("profileName").textContent =
                     voter.name || "-";
 
-
-                document.getElementById(
-                    "profileEmail"
-                ).textContent =
+                document.getElementById("profileEmail").textContent =
                     voter.email || "-";
 
+                document.getElementById("profileRoll").textContent =
+                    voter.enrolment_no || "-";
 
-                document.getElementById(
-                    "profileRoll"
-                ).textContent =
-                    voter.roll_no || "-";
+                document.getElementById("profileMobile").textContent =
+                    voter.mobile || "-";
 
-
-                document.getElementById(
-                    "profileDepartment"
-                ).textContent =
+                document.getElementById("profileDepartment").textContent =
                     voter.department || "-";
 
-
-                document.getElementById(
-                    "profileYear"
-                ).textContent =
+                document.getElementById("profileYear").textContent =
                     voter.year || "-";
 
-
-                document.getElementById(
-                    "profileStatus"
-                ).textContent =
+                document.getElementById("profileStatus").textContent =
                     voter.status || "-";
 
+                document.getElementById("summaryStatus").textContent =
+                    voter.status || "Profile";
 
-                profileMessage.style.display =
-                    "none";
-
-                profileData.style.display =
-                    "grid";
-
+                profileMessage.style.display = "none";
+                profileData.style.display = "grid";
 
             } catch (error) {
 
-                console.error(
-                    "Profile error:",
-                    error
-                );
+                console.error("Profile error:", error);
 
                 profileMessage.textContent =
-                    error.message ||
-                    "Unable to load profile.";
+                    error.message || "Unable to load profile.";
 
-                profileMessage.style.color =
-                    "red";
+                profileMessage.style.color = "red";
             }
         }
 
 
-        /*
-         * ==========================================
-         * START
-         * ==========================================
-         */
+        // ==========================================
+        // OPEN PROFILE EDITOR
+        // ==========================================
+
+        function openProfileEditor() {
+
+            if (!currentVoter) {
+                alert("Profile is not loaded yet.");
+                return;
+            }
+
+            document.getElementById("editName").value =
+                currentVoter.name || "";
+
+            document.getElementById("editEmail").value =
+                currentVoter.email || "";
+
+            document.getElementById("editEnrolment").value =
+                currentVoter.enrolment_no || "";
+
+            document.getElementById("editMobile").value =
+                currentVoter.mobile || "";
+
+            document.getElementById("editDepartment").value =
+                currentVoter.department || "";
+
+            document.getElementById("editYear").value =
+                currentVoter.year || "";
+
+            document.getElementById("profileData").style.display =
+                "none";
+
+            document.getElementById("editProfileButton").style.display =
+                "none";
+
+            document.getElementById("profileEditForm").style.display =
+                "grid";
+        }
+
+
+        // ==========================================
+        // CLOSE PROFILE EDITOR
+        // ==========================================
+
+        function closeProfileEditor() {
+
+            document.getElementById("profileEditForm").style.display =
+                "none";
+
+            document.getElementById("profileData").style.display =
+                "grid";
+
+            document.getElementById("editProfileButton").style.display =
+                "inline-block";
+        }
+
+
+        // ==========================================
+        // SAVE PROFILE CHANGES
+        // ==========================================
+
+        document.getElementById("profileEditForm").addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+                const saveButton =
+                    document.getElementById("saveProfileButton");
+
+                const profileMessage =
+                    document.getElementById("profileMessage");
+
+                const profile = {
+                    name: document.getElementById("editName").value.trim(),
+                    enrolment_no: document.getElementById("editEnrolment").value.trim(),
+                    mobile: document.getElementById("editMobile").value.trim(),
+                    department: document.getElementById("editDepartment").value.trim(),
+                    year: document.getElementById("editYear").value.trim()
+                };
+
+                if (
+                    !profile.name ||
+                    !profile.enrolment_no ||
+                    !profile.mobile ||
+                    !profile.department ||
+                    !profile.year
+                ) {
+                    alert("Please fill in all profile fields.");
+                    return;
+                }
+
+                saveButton.disabled = true;
+                saveButton.textContent = "Saving...";
+
+                try {
+
+                    const response = await fetch(
+                        "/api/voters/me",
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + token
+                            },
+
+                            body: JSON.stringify(profile)
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.message || "Profile update failed."
+                        );
+                    }
+
+                    profileMessage.style.display = "block";
+                    profileMessage.style.color = "#22c55e";
+                    profileMessage.textContent =
+                        data.message || "Profile updated successfully.";
+
+                    closeProfileEditor();
+
+                    await loadProfile();
+
+                    profileMessage.style.display = "block";
+                    profileMessage.style.color = "#22c55e";
+                    profileMessage.textContent =
+                        data.message || "Profile updated successfully.";
+
+                } catch (error) {
+
+                    console.error("Profile update error:", error);
+
+                    alert(error.message || "Unable to update profile.");
+
+                } finally {
+
+                    saveButton.disabled = false;
+                    saveButton.textContent = "Save Changes";
+                }
+
+            }
+        );
+
+
+        // ==========================================
+        // LOAD ELECTIONS FOR DASHBOARD
+        // ==========================================
+
+        async function loadDashboardElections() {
+
+            const message =
+                document.getElementById("electionMessage");
+
+            const container =
+                document.getElementById("dashboardElections");
+
+            try {
+
+                const response = await fetch(
+                    "/api/elections/",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        }
+                    }
+                );
+
+                const data = await response.json();
+
+                if (response.status === 401) {
+                    throw new Error("Session expired. Please login again.");
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.message || "Could not load elections."
+                    );
+                }
+
+                const elections = data.elections || [];
+
+                container.innerHTML = "";
+
+                if (elections.length === 0) {
+
+                    message.textContent =
+                        "No elections available right now.";
+
+                    return;
+                }
+
+                message.style.display = "none";
+
+                elections.slice(0, 3).forEach(function(election) {
+
+                    const isActive =
+                        election.status === "Active";
+
+                    const card =
+                        document.createElement("article");
+
+                    card.className =
+                        "dashboard-election-card";
+
+                    const title =
+                        document.createElement("h3");
+
+                    title.textContent =
+                        election.title ||
+                        election.name ||
+                        "Election";
+
+                    const description =
+                        document.createElement("p");
+
+                    description.textContent =
+                        election.description ||
+                        "Participate in this election.";
+
+                    const details =
+                        document.createElement("div");
+
+                    details.className =
+                        "election-card-bottom";
+
+                    const status =
+                        document.createElement("span");
+
+                    status.className =
+                        isActive
+                            ? "election-status active"
+                            : "election-status stopped";
+
+                    status.textContent =
+                        isActive ? "● Active" : "● Stopped";
+
+                    const button =
+                        document.createElement("a");
+
+                    button.className =
+                        "election-vote-button";
+
+                    button.textContent =
+                        isActive ? "Vote Now →" : "View Election";
+
+                    button.href =
+                        "vote.html?id=" +
+                        encodeURIComponent(election.id);
+
+                    if (!isActive) {
+                        button.href = "elections.html";
+                    }
+
+                    details.appendChild(status);
+                    details.appendChild(button);
+
+                    card.appendChild(title);
+                    card.appendChild(description);
+                    card.appendChild(details);
+
+                    container.appendChild(card);
+
+                });
+
+            } catch (error) {
+
+                console.error("Election loading error:", error);
+
+                message.textContent =
+                    error.message || "Unable to load elections.";
+            }
+        }
+
+
+        // ==========================================
+        // DASHBOARD SEARCH
+        // ==========================================
+
+        document.getElementById("dashboardSearch").addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+                    window.location.href = "elections.html";
+                }
+
+            }
+        );
+
+
+        // ==========================================
+        // START
+        // ==========================================
 
         loadProfile();
+        loadDashboardElections();
 
     </script>
 
