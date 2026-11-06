@@ -21,30 +21,26 @@
         }
 
         .profile-edit-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 9px 20px;
-    border: none;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #ffe58a, #d6a832);
-    color: #17130a;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 3px 10px rgba(214, 168, 50, 0.18);
-    transition: all 0.25s ease;
-}
-
-.profile-edit-btn:hover {
-    background: linear-gradient(135deg, #ffedaa, #e5b943);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 14px rgba(214, 168, 50, 0.3);
-}
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 20px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffe58a, #d6a832);
+            color: #17130a;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(214, 168, 50, 0.18);
+            transition: all 0.25s ease;
+        }
 
         .profile-edit-btn:hover {
-            background: #dfbd7a;
+            background: linear-gradient(135deg, #ffedaa, #e5b943);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(214, 168, 50, 0.3);
         }
 
         .profile-edit-form {
@@ -143,17 +139,32 @@
 
     <!-- LEFT SIDEBAR -->
     <aside class="topbar">
+
         <div class="brand">
             <div class="logo-icon">✓</div>
             <span>VoteRight</span>
         </div>
 
         <nav>
-            <a href="dashboard.html" class="active"><span>⌂</span> Dashboard</a>
-            <a href="elections.html"><span>▣</span> Elections</a>
-            <a href="my-votes.html"><span>✓</span> My Votes</a>
-            <a href="results.html"><span>▥</span> Results</a>
-            <a href="change-password.html"><span>🔒</span> Change Password</a>
+            <a href="dashboard.html" class="active">
+                <span>⌂</span> Dashboard
+            </a>
+
+            <a href="elections.html">
+                <span>▣</span> Elections
+            </a>
+
+            <a href="my-votes.html">
+                <span>✓</span> My Votes
+            </a>
+
+            <a href="results.html">
+                <span>▥</span> Results
+            </a>
+
+            <a href="change-password.html">
+                <span>🔒</span> Change Password
+            </a>
 
             <button type="button" onclick="logout()" class="logout-btn">
                 <span>↪</span> Logout
@@ -163,6 +174,7 @@
         <div class="sidebar-bottom">
             <span>SECURE ONLINE VOTING</span>
         </div>
+
     </aside>
 
 
@@ -171,7 +183,10 @@
 
         <!-- TOP BAR -->
         <header class="dashboard-top">
-            <div class="mobile-menu-label">☰ &nbsp; VoteRight</div>
+
+            <div class="mobile-menu-label">
+                ☰ &nbsp; VoteRight
+            </div>
 
             <label class="search-box">
                 <span>⌕</span>
@@ -184,7 +199,12 @@
             </label>
 
             <div class="top-actions">
-                <a href="elections.html" class="notification-button" title="Elections">
+
+                <a
+                    href="elections.html"
+                    class="notification-button"
+                    title="Elections"
+                >
                     ♧
                 </a>
 
@@ -192,26 +212,40 @@
                     <span class="top-profile-icon">♙</span>
                     <span id="topUserName">Voter</span>
                 </div>
+
             </div>
+
         </header>
 
 
         <!-- WELCOME BANNER -->
         <section class="welcome-section">
+
             <div class="welcome-content">
+
                 <p class="small-text">WELCOME BACK,</p>
+
                 <h1 id="welcomeName">Loading...</h1>
+
                 <p>Your voice matters. Vote for a better tomorrow.</p>
-                <span class="welcome-date">✦ &nbsp; YOUR VOTER DASHBOARD</span>
+
+                <span class="welcome-date">
+                    ✦ &nbsp; YOUR VOTER DASHBOARD
+                </span>
+
             </div>
 
             <div class="welcome-decoration" aria-hidden="true">
+
                 <div class="gold-orbit"></div>
+
                 <div class="vote-illustration">
                     <span class="vote-check">✓</span>
                     <strong>VOTE</strong>
                 </div>
+
             </div>
+
         </section>
 
 
@@ -219,39 +253,54 @@
         <section class="stats-grid">
 
             <a href="elections.html" class="stat-card">
+
                 <div class="stat-icon">▣</div>
+
                 <div class="stat-info">
                     <span>Explore</span>
                     <strong>Elections</strong>
                     <small>View available elections →</small>
                 </div>
+
             </a>
 
+
             <a href="my-votes.html" class="stat-card">
+
                 <div class="stat-icon">✓</div>
+
                 <div class="stat-info">
                     <span>Your account</span>
                     <strong>My Votes</strong>
                     <small>View voting history →</small>
                 </div>
+
             </a>
 
+
             <a href="results.html" class="stat-card">
+
                 <div class="stat-icon">▥</div>
+
                 <div class="stat-info">
                     <span>Election updates</span>
                     <strong>Results</strong>
                     <small>View election results →</small>
                 </div>
+
             </a>
 
+
             <a href="check-status.html" class="stat-card">
+
                 <div class="stat-icon">♙</div>
+
                 <div class="stat-info">
                     <span>Voter account</span>
                     <strong id="summaryStatus">Profile</strong>
                     <small>Check voter details →</small>
                 </div>
+
             </a>
 
         </section>
@@ -260,19 +309,30 @@
         <!-- MAIN DASHBOARD ROW -->
         <section class="dashboard-main-grid">
 
-            <!-- UPCOMING ELECTIONS -->
+            <!-- AVAILABLE ELECTIONS -->
             <div class="dashboard-card upcoming-panel">
 
                 <div class="section-heading">
-                    <h2><span class="heading-icon">🏆</span> Available Elections</h2>
-                    <a href="elections.html" class="view-all">View All →</a>
+
+                    <h2>
+                        <span class="heading-icon">🏆</span>
+                        Available Elections
+                    </h2>
+
+                    <a href="elections.html" class="view-all">
+                        View All →
+                    </a>
+
                 </div>
 
                 <div id="electionMessage" class="message">
                     Loading elections...
                 </div>
 
-                <div id="dashboardElections" class="dashboard-election-list"></div>
+                <div
+                    id="dashboardElections"
+                    class="dashboard-election-list"
+                ></div>
 
             </div>
 
@@ -281,42 +341,70 @@
             <div class="dashboard-card quick-panel">
 
                 <div class="section-heading">
-                    <h2><span class="heading-icon">⚡</span> Quick Actions</h2>
+                    <h2>
+                        <span class="heading-icon">⚡</span>
+                        Quick Actions
+                    </h2>
                 </div>
 
                 <div class="quick-actions">
 
                     <a href="elections.html" class="action-card">
+
                         <div class="action-icon">🗳️</div>
+
                         <h3>Cast Your Vote</h3>
+
                         <p>Choose an election and vote.</p>
+
                     </a>
+
 
                     <a href="results.html" class="action-card">
+
                         <div class="action-icon">▥</div>
+
                         <h3>View Results</h3>
+
                         <p>See election results.</p>
+
                     </a>
+
 
                     <a href="my-votes.html" class="action-card">
+
                         <div class="action-icon">✓</div>
+
                         <h3>My Votes</h3>
+
                         <p>Check your voting history.</p>
+
                     </a>
+
 
                     <a href="check-status.html" class="action-card">
+
                         <div class="action-icon">♙</div>
+
                         <h3>Check Status</h3>
+
                         <p>View your voter status.</p>
+
                     </a>
 
+
                     <a href="change-password.html" class="action-card">
+
                         <div class="action-icon">🔒</div>
+
                         <h3>Change Password</h3>
+
                         <p>Update your account password securely.</p>
+
                     </a>
 
                 </div>
+
             </div>
 
         </section>
@@ -329,20 +417,28 @@
             <div class="dashboard-card profile-panel">
 
                 <div class="section-heading profile-heading-actions">
-                    <h2><span class="heading-icon">♙</span> My Profile</h2>
+
+                    <h2>
+                        <span class="heading-icon">♙</span>
+                        My Profile
+                    </h2>
 
                     <button
                         type="button"
                         class="profile-edit-btn"
                         id="editProfileButton"
-                        onclick="openProfileEditor()">
+                        onclick="openProfileEditor()"
+                    >
                         ✎ Edit Profile
                     </button>
+
                 </div>
+
 
                 <div id="profileMessage" class="message">
                     Loading profile...
                 </div>
+
 
                 <div id="profileData" class="profile-grid">
 
@@ -385,79 +481,116 @@
 
 
                 <!-- PROFILE EDIT FORM -->
-
                 <form id="profileEditForm" class="profile-edit-form">
 
                     <div class="profile-form-group">
+
                         <label for="editName">Full Name</label>
+
                         <input
                             type="text"
                             id="editName"
                             maxlength="100"
-                            required>
+                            required
+                        >
+
                     </div>
 
+
                     <div class="profile-form-group">
-                        <label for="editEmail">Email (Cannot be changed)</label>
+
+                        <label for="editEmail">
+                            Email (Cannot be changed)
+                        </label>
+
                         <input
                             type="email"
                             id="editEmail"
-                            disabled>
+                            disabled
+                        >
+
                     </div>
 
+
                     <div class="profile-form-group">
-                        <label for="editEnrolment">Enrolment Number</label>
+
+                        <label for="editEnrolment">
+                            Enrolment Number
+                        </label>
+
                         <input
                             type="text"
                             id="editEnrolment"
                             maxlength="50"
-                            required>
+                            required
+                        >
+
                     </div>
 
+
                     <div class="profile-form-group">
+
                         <label for="editMobile">Mobile Number</label>
+
                         <input
                             type="tel"
                             id="editMobile"
                             maxlength="20"
-                            required>
+                            required
+                        >
+
                     </div>
 
+
                     <div class="profile-form-group">
+
                         <label for="editDepartment">Department</label>
+
                         <input
                             type="text"
                             id="editDepartment"
                             maxlength="100"
-                            required>
+                            required
+                        >
+
                     </div>
 
+
                     <div class="profile-form-group">
+
                         <label for="editYear">Year</label>
+
                         <input
                             type="text"
                             id="editYear"
                             maxlength="30"
-                            required>
+                            required
+                        >
+
                     </div>
 
+
                     <p class="profile-readonly-note">
-                        Email and voter approval status cannot be changed from this form.
+                        Email and voter approval status cannot be changed
+                        from this form.
                     </p>
+
 
                     <div class="profile-form-actions">
 
                         <button
                             type="submit"
                             class="profile-save-btn"
-                            id="saveProfileButton">
+                            id="saveProfileButton"
+                        >
                             Save Changes
                         </button>
 
                         <button
                             type="button"
                             class="profile-cancel-btn"
-                            onclick="closeProfileEditor()">
+                            onclick="closeProfileEditor()"
+                        >
                             Cancel
                         </button>
 
@@ -470,14 +603,19 @@
 
             <!-- QUOTE -->
             <div class="dashboard-card quote-panel">
+
                 <div class="quote-mark">“</div>
+
                 <blockquote>
                     Your Vote, Your Voice,
                     <br>
                     A Better Tomorrow.
                 </blockquote>
+
                 <span>— VoteRight</span>
+
                 <div class="quote-decoration">✦ ✦ ✦</div>
+
             </div>
 
         </section>
@@ -551,7 +689,6 @@
                 const data = await response.json();
 
                 if (response.status === 401) {
-
                     logout();
                     return;
                 }
@@ -779,8 +916,13 @@
 
             try {
 
+                message.style.display = "block";
+                message.textContent = "Loading elections...";
+
+                container.innerHTML = "";
+
                 const response = await fetch(
-                    "/api/elections/",
+                    "/api/elections/?audience=voter",
                     {
                         method: "GET",
                         headers: {
@@ -792,20 +934,35 @@
                 const data = await response.json();
 
                 if (response.status === 401) {
-                    throw new Error("Session expired. Please login again.");
+                    logout();
+                    return;
                 }
 
-                if (!response.ok) {
+                if (!response.ok || !data.success) {
                     throw new Error(
                         data.message || "Could not load elections."
                     );
                 }
 
-                const elections = data.elections || [];
+
+                // Active, Stopped aur Published elections voters ko visible hongi.
+               // Sirf Draft elections hide rahengi.
+                    const elections = (data.elections || []).filter(
+                    function(election) {
+                      return (
+                              election.status === "Active" ||
+                              election.status === "Stopped" ||
+                              election.status === "Published"
+                                                              );
+                                       }
+                                );
+
 
                 container.innerHTML = "";
 
                 if (elections.length === 0) {
+
+                    message.style.display = "block";
 
                     message.textContent =
                         "No elections available right now.";
@@ -814,6 +971,7 @@
                 }
 
                 message.style.display = "none";
+
 
                 elections.slice(0, 3).forEach(function(election) {
 
@@ -868,12 +1026,10 @@
                         isActive ? "Vote Now →" : "View Election";
 
                     button.href =
-                        "vote.html?id=" +
-                        encodeURIComponent(election.id);
-
-                    if (!isActive) {
-                        button.href = "elections.html";
-                    }
+                        isActive
+                            ? "vote.html?id=" +
+                              encodeURIComponent(election.id)
+                            : "elections.html";
 
                     details.appendChild(status);
                     details.appendChild(button);
@@ -889,6 +1045,10 @@
             } catch (error) {
 
                 console.error("Election loading error:", error);
+
+                container.innerHTML = "";
+
+                message.style.display = "block";
 
                 message.textContent =
                     error.message || "Unable to load elections.";

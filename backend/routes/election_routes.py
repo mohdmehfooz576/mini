@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, jsonify
 
 from models.election import (
@@ -37,6 +36,15 @@ def all_elections():
             include_archived=False
         )
 
+        # Voter-facing pages must never receive Draft or Published elections.
+        # Admin pages keep the complete non-archived list for management.
+        if request.args.get("audience", "").strip().lower() == "voter":
+            elections = [
+                election
+                for election in elections
+                if election.get("status") in ("Active", "Stopped")
+            ]
+
         return jsonify({
             "success": True,
             "elections": elections
@@ -55,10 +63,7 @@ def all_elections():
 # GET ARCHIVED ELECTIONS - ADMIN ONLY
 # ==========================================
 
-@election_routes.route(
-    "/archived",
-    methods=["GET"]
-)
+@election_routes.route("/archived", methods=["GET"])
 @admin_required
 def archived_elections():
 
@@ -92,10 +97,7 @@ def archived_elections():
 # GET SINGLE ELECTION WITH CANDIDATES
 # ==========================================
 
-@election_routes.route(
-    "/<int:election_id>",
-    methods=["GET"]
-)
+@election_routes.route("/<int:election_id>", methods=["GET"])
 def single_election(election_id):
 
     try:
@@ -202,10 +204,7 @@ def add_election():
 # UPDATE ELECTION DETAILS - DRAFT ONLY
 # ==========================================
 
-@election_routes.route(
-    "/<int:election_id>",
-    methods=["PUT"]
-)
+@election_routes.route("/<int:election_id>", methods=["PUT"])
 @admin_required
 def edit_election(election_id):
 
@@ -245,7 +244,6 @@ def edit_election(election_id):
         }), 400
 
     try:
-
         updated = update_election_details(
             election_id,
             name,
@@ -266,14 +264,12 @@ def edit_election(election_id):
         }), 200
 
     except ValueError as error:
-
         return jsonify({
             "success": False,
             "message": str(error)
         }), 400
 
     except Exception as error:
-
         print("Election edit error:", error)
 
         return jsonify({
@@ -286,10 +282,7 @@ def edit_election(election_id):
 # PUBLISH / STOP / REOPEN ELECTION
 # ==========================================
 
-@election_routes.route(
-    "/<int:election_id>/status",
-    methods=["PUT"]
-)
+@election_routes.route("/<int:election_id>/status", methods=["PUT"])
 @admin_required
 def change_status(election_id):
 
@@ -319,7 +312,6 @@ def change_status(election_id):
         }), 404
 
     try:
-
         changed = update_election_status(
             election_id,
             status
@@ -344,14 +336,12 @@ def change_status(election_id):
         }), 200
 
     except ValueError as error:
-
         return jsonify({
             "success": False,
             "message": str(error)
         }), 400
 
     except Exception as error:
-
         print("Election status error:", error)
 
         return jsonify({
@@ -364,15 +354,11 @@ def change_status(election_id):
 # ARCHIVE ELECTION - ADMIN ONLY
 # ==========================================
 
-@election_routes.route(
-    "/<int:election_id>/archive",
-    methods=["PUT"]
-)
+@election_routes.route("/<int:election_id>/archive", methods=["PUT"])
 @admin_required
 def archive_election_route(election_id):
 
     try:
-
         archived = archive_election(election_id)
 
         if not archived:
@@ -388,14 +374,12 @@ def archive_election_route(election_id):
         }), 200
 
     except ValueError as error:
-
         return jsonify({
             "success": False,
             "message": str(error)
         }), 400
 
     except Exception as error:
-
         print("Election archive error:", error)
 
         return jsonify({
@@ -408,15 +392,11 @@ def archive_election_route(election_id):
 # DELETE ELECTION - ADMIN ONLY
 # ==========================================
 
-@election_routes.route(
-    "/<int:election_id>",
-    methods=["DELETE"]
-)
+@election_routes.route("/<int:election_id>", methods=["DELETE"])
 @admin_required
 def remove_election(election_id):
 
     try:
-
         result = delete_election(election_id)
 
         if not result:
@@ -426,14 +406,11 @@ def remove_election(election_id):
             }), 404
 
         if result["archived"]:
-
             message = (
                 "Election has been archived. "
                 "All votes and voter receipts have been preserved."
             )
-
         else:
-
             message = "Draft election deleted successfully"
 
         return jsonify({
@@ -445,14 +422,12 @@ def remove_election(election_id):
         }), 200
 
     except ValueError as error:
-
         return jsonify({
             "success": False,
             "message": str(error)
         }), 400
 
     except Exception as error:
-
         print("Election deletion error:", error)
 
         return jsonify({
@@ -465,14 +440,10 @@ def remove_election(election_id):
 # GET ELECTION RESULTS
 # ==========================================
 
-@election_routes.route(
-    "/<int:election_id>/results",
-    methods=["GET"]
-)
+@election_routes.route("/<int:election_id>/results", methods=["GET"])
 def election_results(election_id):
 
     try:
-
         election = get_election_by_id(election_id)
 
         if not election:
@@ -503,7 +474,6 @@ def election_results(election_id):
         }), 200
 
     except Exception as error:
-
         print("Election results error:", error)
 
         return jsonify({
