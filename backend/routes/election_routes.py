@@ -7,6 +7,7 @@ from models.election import (
     update_election_details,
     update_election_status,
     archive_election,
+    unarchive_election,
     delete_election
 )
 
@@ -385,6 +386,52 @@ def archive_election_route(election_id):
         return jsonify({
             "success": False,
             "message": "Election could not be archived"
+        }), 500
+
+
+# ==========================================
+# UNARCHIVE ELECTION - ADMIN ONLY
+# ==========================================
+
+@election_routes.route("/<int:election_id>/unarchive", methods=["PUT"])
+@admin_required
+def unarchive_election_route(election_id):
+
+    try:
+        restored = unarchive_election(election_id)
+
+        if not restored:
+            return jsonify({
+                "success": False,
+                "message": "Election not found"
+            }), 404
+
+        election = get_election_by_id(election_id)
+
+        restored_status = (
+            election.get("status")
+            if election
+            else None
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Election unarchived successfully",
+            "status": restored_status
+        }), 200
+
+    except ValueError as error:
+        return jsonify({
+            "success": False,
+            "message": str(error)
+        }), 400
+
+    except Exception as error:
+        print("Election unarchive error:", error)
+
+        return jsonify({
+            "success": False,
+            "message": "Election could not be unarchived"
         }), 500
 
 

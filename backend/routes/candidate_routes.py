@@ -120,7 +120,7 @@ def candidates(election_id):
 # ==========================================
 # ADD CANDIDATE WITH PHOTO
 # ADMIN ONLY
-# ONLY DRAFT ELECTIONS
+# DRAFT AND SCHEDULED ELECTIONS
 # ==========================================
 
 @candidate_routes.route(
@@ -166,20 +166,26 @@ def add_candidate():
         }), 404
 
     # ======================================
-    # IMPORTANT: CANDIDATE ADD RESTRICTION
-    # Candidates can only be added in Draft.
+    # CANDIDATE ADD RESTRICTION
+    # Allow Draft and Scheduled (Published)
     # ======================================
 
     election_status = str(
         election.get("status", "")
     ).strip().lower()
 
-    if election_status != "draft":
+    allowed_statuses = {
+        "draft",
+        "published"
+    }
+
+    if election_status not in allowed_statuses:
         return jsonify({
             "success": False,
             "message": (
-                "Candidates can only be added to Draft elections. "
-                "This election has already been published or started."
+                "Candidates can only be added to Draft "
+                "or Scheduled elections. Active, Stopped, "
+                "Completed and Archived elections are not allowed."
             ),
             "election_status": election.get("status")
         }), 403

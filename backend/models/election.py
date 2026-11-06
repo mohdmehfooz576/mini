@@ -1,4 +1,3 @@
-
 from datetime import date
 from database.db import get_connection
 
@@ -415,6 +414,7 @@ def update_election_status(election_id, status):
 
 # ==========================================
 # ARCHIVE ELECTION
+# Save original status before archiving
 # ==========================================
 
 def archive_election(election_id):
@@ -445,7 +445,9 @@ def archive_election(election_id):
             connection.rollback()
             return False
 
-        if election["status"] not in (
+        original_status = election["status"]
+
+        if original_status not in (
             "Published",
             "Stopped",
             "Completed"
@@ -458,10 +460,99 @@ def archive_election(election_id):
         cursor.execute(
             """
             UPDATE elections
-            SET status = 'Archived'
+            SET
+                archived_from_status = %s,
+                status = 'Archived'
             WHERE id = %s
             """,
+            (original_status, election_id)
+        )
+
+        connection.commit()
+        return True
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# ==========================================
+# UNARCHIVE ELECTION
+# Restore original status
+# ==========================================
+
+def unarchive_election(election_id):
+
+    connection = get_connection()
+
+    if not connection:
+        raise Exception("Database connection failed")
+
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.execute(
+            """
+            SELECT
+                id,
+                status,
+                archived_from_status,
+                start_date,
+                end_date
+            FROM elections
+            WHERE id = %s
+            FOR UPDATE
+            """,
             (election_id,)
+        )
+
+        election = cursor.fetchone()
+
+        if not election:
+            connection.rollback()
+            return False
+
+        if election["status"] != "Archived":
+            connection.rollback()
+            raise ValueError(
+                "Only archived elections can be unarchived"
+            )
+
+        original_status = election.get("archived_from_status")
+
+        # Handle elections archived before this feature was added.
+        # A future election is restored as Published (Scheduled).
+        if original_status not in {
+            "Draft",
+            "Published",
+            "Active",
+            "Stopped",
+            "Completed"
+        }:
+
+            today = date.today()
+
+            if election["start_date"] > today:
+                original_status = "Published"
+            else:
+                # Safe fallback: do not automatically enable voting
+                # when the original status is unknown.
+                original_status = "Stopped"
+
+        cursor.execute(
+            """
+            UPDATE elections
+            SET
+                status = %s,
+                archived_from_status = NULL
+            WHERE id = %s
+              AND status = 'Archived'
+            """,
+            (original_status, election_id)
         )
 
         connection.commit()
@@ -522,7 +613,9 @@ def delete_election(election_id):
             cursor.execute(
                 """
                 UPDATE elections
-                SET status = 'Archived'
+                SET
+                    archived_from_status = status,
+                    status = 'Archived'
                 WHERE id = %s
                 """,
                 (election_id,)

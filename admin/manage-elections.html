@@ -141,6 +141,30 @@
             font-weight: 600;
         }
 
+        /* UNARCHIVE BUTTON */
+
+        .election-action-unarchive {
+            background: linear-gradient(135deg, #d1fae5, #6ee7b7);
+            color: #064e3b;
+            border: 1px solid #34d399;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .election-action-unarchive:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .election-action-unarchive:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .election-action-edit {
             background: #252016;
             color: #e8c979;
@@ -787,8 +811,6 @@
 
             /*
              * ARCHIVED ELECTION
-             * Only results can be viewed.
-             * No management actions are available.
              */
 
             if (status === "Archived") {
@@ -803,6 +825,13 @@
                     "View Results",
                     "election-action-secondary",
                     () => openResults(electionId)
+                );
+
+                addAction(
+                    actions,
+                    "Unarchive",
+                    "election-action-unarchive",
+                    () => unarchiveElection(electionId)
                 );
 
                 card.append(
@@ -1255,6 +1284,46 @@
             } catch (error) {
 
                 console.error("Archive error:", error);
+
+                alert(error.message);
+            }
+        }
+
+        /* UNARCHIVE ELECTION */
+
+        async function unarchiveElection(electionId) {
+
+            if (currentElectionView !== "archived") {
+                return;
+            }
+
+            const confirmed = confirm(
+                "Unarchive this election and restore it to the normal elections list?"
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+
+                const data = await apiRequest(
+                    `/api/elections/${electionId}/unarchive`,
+                    {
+                        method: "PUT"
+                    }
+                );
+
+                alert(
+                    data.message ||
+                    "Election unarchived successfully."
+                );
+
+                await loadElections();
+
+            } catch (error) {
+
+                console.error("Unarchive error:", error);
 
                 alert(error.message);
             }
